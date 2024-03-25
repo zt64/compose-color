@@ -1,0 +1,46 @@
+name: Publish release
+run-name: Publish release ${{ github.event.release.tag_name }}
+
+on:
+  workflow_dispatch:
+  release:
+    types: [ prereleased, released ]
+
+jobs:
+  publish:
+    name: "Publish release"
+    timeout-minutes: 60
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ vars.JVM_VERSION }}
+
+      - name: Test version
+        id: version
+        run: |
+          version=$(cat lib/build.gradle.kts | grep -E 'version = "' | cut -d \" -f 2)
+          if git show-ref --tags --quiet --verify -- "refs/tags/$version" >/dev/null; then
+            echo "Git tag $version already exists, failing to publish";
+            exit 1
+          else
+            echo "::set-output name=release_tag::$version"
+          fi
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
+
+      - name: Build and Maven publish
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_IN_MEMORY_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_IN_MEMORY_KEY_PASSWORD }}
+        run: ./gradlew publishAllPublicationsToMavenCentral --no-configuration-cache --stacktrace
