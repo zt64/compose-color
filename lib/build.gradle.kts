@@ -38,10 +38,9 @@ kotlin {
     }
 }
 
-@Suppress("UnstableApiUsage")
 mavenPublishing {
-    publishToMavenCentral(SonatypeHost.DEFAULT, automaticRelease = true)
-    coordinates("dev.zt64.compose.color", "compose-color", project.version.toString())
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease = true)
+    coordinates("dev.zt64", "compose-color", project.version.toString())
     signAllPublications()
 
     pom {
