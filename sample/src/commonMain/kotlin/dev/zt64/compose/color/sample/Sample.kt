@@ -9,8 +9,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import dev.zt64.compose.color.ColorCircle
-import dev.zt64.compose.color.HueSlider
 import dev.zt64.compose.color.StandardColorPicker
+import dev.zt64.compose.color.component.HueSlider
 import dev.zt64.compose.color.util.hue
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -3,10 +3,13 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose)
+    alias(libs.plugins.android.application)
 }
 
 kotlin {
     jvm()
+
+    androidTarget()
 
     iosX64()
     iosArm64()
@@ -38,11 +41,27 @@ kotlin {
             }
         }
 
+        androidMain {
+            dependencies {
+                implementation(libs.androidx.activity)
+            }
+        }
+
         jvmMain {
             dependencies {
                 implementation(compose.desktop.currentOs)
             }
         }
+    }
+}
+
+android {
+    namespace = "dev.zt64.compose.color.sample"
+
+    compileSdk = 34
+
+    defaultConfig {
+        minSdk = 21
     }
 }
 
