@@ -1,25 +1,27 @@
 [versions]
-kotlin = "1.9.22"
-compose = "1.6.0"
+kotlin = "1.9.23"
+compose = "1.6.1"
 android = "8.2.2"
-materialKolor = "1.4.3"
+androidActivity = "1.9.0-beta01"
+materialKolor = "1.4.4"
 compatibility = "0.14.0"
-publish = "0.27.0"
-ktlint = "12.1.0"
+publish = "0.28.0"
+ktlintPlugin = "12.1.0"
+ktlint = "1.2.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 settings = "com.russhwolf:multiplatform-settings-no-arg:1.1.1"
+androidx-activity = { module = "androidx.activity:activity-compose", version.ref = "androidActivity" }
 
 ktlint-rules-compose = "io.nlopez.compose.rules:ktlint:0.3.11"
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
-
 android-application = { id = "com.android.application", version.ref = "android" }
 
 compatibility = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "compatibility" }
 publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }
-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintPlugin" }
