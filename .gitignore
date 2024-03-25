@@ -1,6 +1,7 @@
 .cache
 .idea
 .fleet
+.kotlin
 .gradle
 local.properties
 build/
