@@ -15,7 +15,7 @@ materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "ma
 settings = "com.russhwolf:multiplatform-settings-no-arg:1.1.1"
 androidx-activity = { module = "androidx.activity:activity-compose", version.ref = "androidActivity" }
 
-ktlint-rules-compose = "io.nlopez.compose.rules:ktlint:0.3.15"
+ktlint-rules-compose = "io.nlopez.compose.rules:ktlint:0.3.18"
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
