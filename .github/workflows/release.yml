@@ -17,12 +17,6 @@ jobs:
         with:
           ref: ${{ github.event.release.tag_name }}
 
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: ${{ vars.JVM_VERSION }}
-
       - name: Test version
         id: version
         run: |
@@ -31,11 +25,24 @@ jobs:
             echo "Git tag $version already exists, failing to publish";
             exit 1
           else
-            echo "::set-output name=release_tag::$version"
+            echo "release_tag=$version" >> $GITHUB_OUTPUT
           fi
 
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ vars.JVM_DISTRIBUTION }}
+          java-version: ${{ vars.JVM_VERSION }}
+
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Cache konan directory
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/build.gradle.kts') }}
+          restore-keys: "${{ runner.os }}-konan-"
 
       - name: Build and Maven publish
         env:
