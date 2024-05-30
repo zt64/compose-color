@@ -7,37 +7,37 @@ import kotlin.test.assertEquals
 class ColorTest {
     @Test
     fun testHsl() {
-        val color = Color.hsl(0f, 0f, 0f)
-        assertEquals(0f, color.hue)
-        assertEquals(0f, color.saturation)
-        assertEquals(0f, color.lightness)
-
-        val color2 = Color.hsl(0f, 1f, 0.5f)
-        assertEquals(0f, color2.hue)
-        assertEquals(1f, color2.saturation)
-        assertEquals(0.5f, color2.lightness)
-
-        val color3 = Color.hsl(120f, 1f, 0.5f)
-        assertEquals(120f, color3.hue)
-        assertEquals(1f, color3.saturation)
-        assertEquals(0.5f, color3.lightness)
+        testHsl(0f, 0f, 0f)
+        testHsl(0f, 1f, 0.5f)
+        testHsl(120f, 1f, 0.5f)
     }
 
     @Test
     fun testHsv() {
-        val color = Color.hsv(0f, 0f, 0f)
-        assertEquals(0f, color.hue)
-        assertEquals(0f, color.saturation)
-        assertEquals(0f, color.hsvValue)
+        testHsv(0f, 0f, 0f)
+        testHsv(0f, 1f, 1f)
+        testHsv(120f, 1f, 1f)
+    }
 
-        val color2 = Color.hsv(0f, 1f, 1f)
-        assertEquals(0f, color2.hue)
-        assertEquals(1f, color2.saturation)
-        assertEquals(1f, color2.hsvValue)
+    private fun testHsl(
+        h: Float,
+        s: Float,
+        l: Float
+    ) {
+        val color = Color.hsl(h, s, l)
+        assertEquals(h, color.hue)
+        assertEquals(s, color.hslSaturation)
+        assertEquals(l, color.lightness)
+    }
 
-        val color3 = Color.hsv(120f, 1f, 1f)
-        assertEquals(120f, color3.hue)
-        assertEquals(1f, color3.saturation)
-        assertEquals(1f, color3.hsvValue)
+    private fun testHsv(
+        h: Float,
+        s: Float,
+        v: Float
+    ) {
+        val color = Color.hsv(h, s, v)
+        assertEquals(h, color.hue)
+        assertEquals(s, color.saturation)
+        assertEquals(v, color.hsvValue)
     }
 }

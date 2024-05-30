@@ -7,6 +7,8 @@ pluginManagement {
         gradlePluginPortal()
         google()
     }
+
+    includeBuild("build-logic")
 }
 
 dependencyResolutionManagement {
@@ -17,4 +19,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "compose-color"
-include("lib", "util", "sample")
+include("core", "color-circle", "color-ring", "color-square", "color-well", "util", "sample")

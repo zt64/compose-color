@@ -1,9 +1,24 @@
 package dev.zt64.compose.color.sample
 
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
 import androidx.compose.ui.window.singleWindowApplication
+import java.awt.Dimension
+import kotlin.system.exitProcess
 
 fun main() {
-    singleWindowApplication {
+    singleWindowApplication(
+        title = "Compose Color Sample",
+        onKeyEvent = {
+            if (it.key == Key.Escape) {
+                exitProcess(0)
+            } else {
+                false
+            }
+        }
+    ) {
+        window.minimumSize = Dimension(800, 600)
+
         Sample()
     }
 }

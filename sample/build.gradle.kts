@@ -1,8 +1,12 @@
+import dev.zt64.compose.color.gradle.apple
+import org.jetbrains.compose.resources.ResourcesExtension
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.compose)
+    id("kmp-base")
+    // alias(libs.plugins.cocoapods)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose.jb)
     alias(libs.plugins.android.application)
 }
 
@@ -11,9 +15,12 @@ kotlin {
 
     androidTarget()
 
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    apple {
+        binaries.framework {
+            baseName = "shared"
+            isStatic = true
+        }
+    }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
@@ -26,10 +33,26 @@ kotlin {
         binaries.executable()
     }
 
+    // cocoapods {
+    //     version = "1.0.0"
+    //     summary = "Some description for the Shared Module"
+    //     homepage = "Link to the Shared Module homepage"
+    //     ios.deploymentTarget = "14.1"
+    //     podfile = project.file("./iosApp/Podfile")
+    //     framework {
+    //         baseName = "shared"
+    //     }
+    // }
+
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.lib)
+                implementation(projects.core)
+                implementation(projects.colorCircle)
+                implementation(projects.colorRing)
+                implementation(projects.colorSquare)
+                implementation(projects.colorWell)
+
                 implementation(projects.util)
 
                 implementation(compose.runtime)
@@ -44,6 +67,7 @@ kotlin {
         androidMain {
             dependencies {
                 implementation(libs.androidx.activity)
+                implementation(libs.appcompat)
             }
         }
 
@@ -57,20 +81,22 @@ kotlin {
 
 android {
     namespace = "dev.zt64.compose.color.sample"
-
     compileSdk = 34
 
     defaultConfig {
         minSdk = 21
+        targetSdk = 34
     }
 }
 
 compose {
+    resources {
+        generateResClass = ResourcesExtension.ResourceClassGeneration.Never
+    }
+
     desktop {
         application {
             mainClass = "dev.zt64.compose.color.sample.MainKt"
         }
     }
-
-    experimental.web.application {}
 }

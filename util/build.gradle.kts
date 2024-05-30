@@ -1,20 +1,15 @@
+import dev.zt64.compose.color.gradle.apple
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.compose)
-    alias(libs.plugins.publish)
+    id("kmp-library")
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compatibility)
 }
 
 kotlin {
-    explicitApi()
-
     jvm()
-
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    apple()
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
@@ -28,6 +23,7 @@ kotlin {
                 implementation(compose.uiUtil)
             }
         }
+
         commonTest {
             dependencies {
                 implementation(libs.kotlin.test)
