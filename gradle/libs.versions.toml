@@ -7,7 +7,7 @@ android = "8.2.0"
 materialKolor = "1.6.1"
 settings = "1.1.1"
 androidActivity = "1.9.0"
-appcompat = "1.6.1"
+appcompat = "1.7.0"
 
 # Maintenance versions
 compatibility = "0.14.0"
