@@ -11,7 +11,7 @@ appcompat = "1.7.0"
 
 # Maintenance versions
 compatibility = "0.14.0"
-publish = "0.28.0"
+publish = "0.29.0"
 ktlintPlugin = "12.1.1"
 ktlint = "1.2.1"
 ktlintRules-compose = "0.4.4"
