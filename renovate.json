@@ -2,17 +2,9 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
         "config:recommended",
+        ":semanticCommitTypeAll(chore)",
         ":automergeMinor",
         ":automergeDigest",
         "schedule:automergeDaily"
-    ],
-    "packageRules": [
-        {
-            "groupName": "Kotlin, Compose",
-            "matchPackagePatterns": [
-                "org.jetbrains.kotlin.*",
-                "org.jetbrains.compose.*"
-            ]
-        }
     ]
 }
