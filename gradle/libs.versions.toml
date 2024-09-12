@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.0.20"
 compose-jb = "1.6.11"
-android = "8.5.2"
+android = "8.6.0"
 
 # Sample dependency versions
 materialKolor = "1.7.0"
