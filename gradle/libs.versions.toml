@@ -4,7 +4,7 @@ compose-jb = "1.6.11"
 android = "8.7.0"
 
 # Sample dependency versions
-materialKolor = "1.7.0"
+materialKolor = "1.7.1"
 settings = "1.2.0"
 androidActivity = "1.9.2"
 appcompat = "1.7.0"
