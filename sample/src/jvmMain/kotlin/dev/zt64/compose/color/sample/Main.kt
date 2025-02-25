@@ -17,7 +17,7 @@ fun main() {
             }
         }
     ) {
-        window.minimumSize = Dimension(800, 600)
+        window.minimumSize = Dimension(900, 800)
 
         Sample()
     }
