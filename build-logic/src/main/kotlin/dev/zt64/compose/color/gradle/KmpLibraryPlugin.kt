@@ -7,7 +7,6 @@ import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import java.util.*
 
@@ -34,7 +33,6 @@ class KmpLibraryPlugin : Plugin<Project> {
                 browser()
             }
 
-            @OptIn(ExperimentalWasmDsl::class)
             wasmJs {
                 browser()
             }

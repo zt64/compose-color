@@ -1,5 +1,5 @@
 import dev.zt64.compose.color.gradle.apple
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     id("kmp-library")
@@ -7,11 +7,11 @@ plugins {
     alias(libs.plugins.compatibility)
 }
 
+@OptIn(ExperimentalWasmDsl::class)
 kotlin {
     jvm()
     apple()
 
-    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
     }

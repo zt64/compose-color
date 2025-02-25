@@ -1,6 +1,6 @@
 import dev.zt64.compose.color.gradle.apple
 import org.jetbrains.compose.resources.ResourcesExtension
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     id("kmp-base")
@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+@OptIn(ExperimentalWasmDsl::class)
 kotlin {
     jvm()
 
@@ -22,7 +23,6 @@ kotlin {
         }
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "sample"
         browser {
