@@ -65,11 +65,11 @@ class KmpLibraryPlugin : Plugin<Project> {
         target.apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
         target.configure<KtlintExtension> {
-            version.set(target.libs.findVersion("ktlint").get().strictVersion)
+            version.set(target.libs.findVersion("ktlint").get().requiredVersion)
         }
 
         target.dependencies {
-            "ktlintRuleset"(target.libs.findLibrary("ktlint-rules-compose").get())
+            "ktlintRuleset"(target.libs.findLibrary("ktlint-rules-compose").get().get().toString())
         }
     }
 

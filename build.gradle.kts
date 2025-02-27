@@ -13,22 +13,6 @@ plugins {
 }
 
 allprojects {
-    apply {
-        // plugin("org.jlleitschuh.gradle.ktlint")
-    }
-
-    // configure<KtlintExtension> {
-    //     version.set(rootProject.libs.versions.ktlint)
-    // }
-
     group = "dev.zt64"
     version = "1.0.0"
 }
-
-// subprojects {
-//     dependencies {
-//         val ktlintRuleset by configurations
-//
-//         ktlintRuleset(rootProject.libs.ktlint.rules.compose)
-//     }
-// }
