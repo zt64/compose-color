@@ -69,7 +69,7 @@ class KmpLibraryPlugin : Plugin<Project> {
         }
 
         target.dependencies {
-            "ktlintRuleset"(target.libs.findLibrary("ktlint-rules-compose").get().get().toString())
+            // "ktlintRuleset"(target.libs.findLibrary("ktlint-rules-compose").get().get().toString())
         }
     }
 
