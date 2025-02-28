@@ -3,6 +3,8 @@ package dev.zt64.compose.color.sample
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -67,6 +69,26 @@ fun Sample() {
                                 )
                             }
                         }
+                    }
+                )
+            },
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    onClick = {
+                        val r = (0..255).random()
+                        val g = (0..255).random()
+                        val b = (0..255).random()
+
+                        color = Color(r, g, b)
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = null
+                        )
+                    },
+                    text = {
+                        Text("Randomize")
                     }
                 )
             }
