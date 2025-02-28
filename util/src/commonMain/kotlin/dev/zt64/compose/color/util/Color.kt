@@ -1,7 +1,7 @@
 package dev.zt64.compose.color.util
 
 import androidx.compose.ui.graphics.Color
-import kotlin.math.abs
+import kotlin.math.round
 
 /**
  * The hue of the color
@@ -14,12 +14,16 @@ public val Color.hue: Float
         val min = minOf(r, g, b)
         val delta = max - min
 
-        return when {
-            delta == 0f -> 0f
-            max == r -> ((g - b) / delta % 6 + 6) % 6
-            max == g -> (b - r) / delta + 2
-            else -> (r - g) / delta + 4
-        } * 60
+        if (delta == 0f) return 0f
+
+        val hue = when (max) {
+            r -> ((g - b) / delta) % 6
+            g -> ((b - r) / delta) + 2
+            b -> ((r - g) / delta) + 4
+            else -> 0f
+        }
+
+        return round(((hue * 60f) + 360f) % 360f)
     }
 
 /**
@@ -39,7 +43,12 @@ public val Color.hslSaturation: Float
     get() {
         val max = maxComponent()
         val min = minComponent()
-        return if (max == 0f) 0f else (max - min) / (1 - abs(max + min - 1))
+        val l = (max + min) / 2
+        return when {
+            max == min -> 0f
+            l <= 0.5f -> (max - min) / (max + min)
+            else -> (max - min) / (2 - max - min)
+        }
     }
 
 /**
