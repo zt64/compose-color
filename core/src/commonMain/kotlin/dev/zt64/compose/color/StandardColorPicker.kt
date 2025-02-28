@@ -21,6 +21,19 @@ import dev.zt64.compose.color.util.hsvValue
 import dev.zt64.compose.color.util.hue
 import dev.zt64.compose.color.util.saturation
 
+/**
+ * Standard color picker that allows the user to select a color by dragging a magnifier around the color space.
+ *
+ * The color is represented in HSV color space with a fixed hue. The saturation and value can be controlled by
+ * dragging the magnifier.
+ *
+ * @param color The current color
+ * @param onColorChange Callback that is called when the color changes
+ * @param modifier
+ * @param interactionSource
+ * @param magnifier Composable that is used to draw the magnifier
+ * @param onColorChangeFinished Callback that is called when the user finishes changing the color
+ */
 @Composable
 public fun StandardColorPicker(
     color: Color,

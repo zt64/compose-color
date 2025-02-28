@@ -53,7 +53,7 @@ public fun ColorCircle(
     }
 ) {
     val scope = rememberCoroutineScope()
-
+    val color by rememberUpdatedState(color)
     var radius by rememberSaveable {
         mutableStateOf(0f)
     }

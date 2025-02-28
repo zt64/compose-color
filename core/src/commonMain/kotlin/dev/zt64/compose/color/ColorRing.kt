@@ -23,7 +23,12 @@ import dev.zt64.compose.color.util.saturation
 import kotlin.math.*
 
 /**
- * TODO: Add documentation
+ * A color ring that allows the user to select a hue by rotating a handle around the ring. The color
+ * ring is a continuous gradient of colors from red to red.
+ *
+ * To be able to also control the saturation, use the [ColorCircle] composable.
+ *
+ * @sample dev.zt64.compose.color.samples.ColorRingSample
  *
  * @param color
  * @param onColorChange
@@ -42,16 +47,11 @@ public fun ColorRing(
     },
     onColorChangeFinished: () -> Unit = {}
 ) {
+    val color by rememberUpdatedState(color)
     var strokeWidth = remember { 16f }
     var radius by remember { mutableStateOf(0f) }
     var center by remember { mutableStateOf(Offset.Zero) }
     var handleCenter by remember {
-        // mutableStateOf(
-        //     Offset(
-        //         (radius.pow(2) * cos(color.hue * PI / 180)).toFloat(),
-        //         (radius.pow(2) * sin(color.hue * PI / 180)).toFloat()
-        //     )
-        // )
         mutableStateOf(Offset.Zero)
     }
 
