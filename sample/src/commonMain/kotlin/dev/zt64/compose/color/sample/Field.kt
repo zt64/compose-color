@@ -13,10 +13,7 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalStdlibApi::class)
 @Composable
-fun HexField(
-    color: Color,
-    onColorChange: (Color) -> Unit
-) {
+fun HexField(color: Color, onColorChange: (Color) -> Unit) {
     val r by remember(color) { derivedStateOf { (color.red * 255).toInt() } }
     val g by remember(color) { derivedStateOf { (color.green * 255).toInt() } }
     val b by remember(color) { derivedStateOf { (color.blue * 255).toInt() } }
@@ -50,10 +47,7 @@ fun HexField(
 }
 
 @Composable
-fun RgbField(
-    color: Color,
-    onColorChange: (Color) -> Unit
-) {
+fun RgbField(color: Color, onColorChange: (Color) -> Unit) {
     val r by remember(color) {
         derivedStateOf { (color.red * 255).toInt() }
     }
@@ -85,10 +79,7 @@ fun RgbField(
 }
 
 @Composable
-fun HsvField(
-    color: Color,
-    onColorChange: (Color) -> Unit
-) {
+fun HsvField(color: Color, onColorChange: (Color) -> Unit) {
     val h by remember(color) { derivedStateOf { color.hue.roundToInt() } }
     val s by remember(color) { derivedStateOf { (color.saturation * 100).roundToInt() } }
     val v by remember(color) { derivedStateOf { (color.hsvValue * 100).roundToInt() } }
@@ -113,10 +104,7 @@ fun HsvField(
 }
 
 @Composable
-fun HslField(
-    color: Color,
-    onColorChange: (Color) -> Unit
-) {
+fun HslField(color: Color, onColorChange: (Color) -> Unit) {
     val h by remember(color) { derivedStateOf { color.hue.roundToInt() } }
     val s by remember(color) { derivedStateOf { (color.hslSaturation * 100).roundToInt() } }
     val l by remember(color) { derivedStateOf { (color.lightness * 100).roundToInt() } }
@@ -143,12 +131,7 @@ fun HslField(
 }
 
 @Composable
-fun FormatField(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Boolean,
-    modifier: Modifier = Modifier
-) {
+fun FormatField(label: String, value: String, onValueChange: (String) -> Boolean, modifier: Modifier = Modifier) {
     var isError by remember { mutableStateOf(false) }
 
     TextField(

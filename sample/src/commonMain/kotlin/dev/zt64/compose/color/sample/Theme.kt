@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.materialkolor.DynamicMaterialTheme
+import com.materialkolor.PaletteStyle
 
 enum class Theme(val icon: ImageVector, val label: String) {
     LIGHT(Icons.Default.LightMode, "Light"),
@@ -18,14 +19,11 @@ enum class Theme(val icon: ImageVector, val label: String) {
 }
 
 @Composable
-fun Theme(
-    color: Color,
-    theme: Theme,
-    content: @Composable () -> Unit
-) {
+fun Theme(color: Color, theme: Theme, content: @Composable () -> Unit) {
     DynamicMaterialTheme(
         seedColor = color,
         useDarkTheme = theme == Theme.DARK || theme == Theme.SYSTEM && isSystemInDarkTheme(),
+        style = PaletteStyle.Fidelity,
         content = content,
         animate = true,
         animationSpec = tween()

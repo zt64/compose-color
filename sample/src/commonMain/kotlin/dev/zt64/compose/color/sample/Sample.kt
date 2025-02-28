@@ -71,176 +71,180 @@ fun Sample() {
                 )
             }
         ) { paddingValues ->
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 24.dp),
-                horizontalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                Column(
+            Box {
+                Row(
                     modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                        .width(900.dp)
+                        .padding(paddingValues)
+                        .padding(horizontal = 24.dp),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    Row {
-                        Text("Color Circle")
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+                        Row {
+                            Text("Color Circle")
 
-                        Spacer(Modifier.weight(1f, true))
+                            Spacer(Modifier.weight(1f))
 
-                        ColorCircle(
-                            color = color,
-                            onColorChange = { color = it },
-                            onColorChangeFinished = {
-                            }
-                        )
-                    }
-
-                    Row {
-                        Text("Standard Color Picker")
-
-                        Spacer(Modifier.weight(1f, true))
-
-                        StandardColorPicker(
-                            modifier = Modifier.size(100.dp),
-                            color = color,
-                            onColorChange = { color = it }
-                        )
-                    }
-
-                    Row {
-                        Text("Color Ring")
-
-                        Spacer(Modifier.weight(1f, true))
-
-                        ColorRing(
-                            color = color,
-                            onColorChange = { color = it }
-                        )
-                    }
-
-                    // Row {
-                    //     Text("Minimal Color Well")
-                    //
-                    //     Spacer(Modifier.weight(1f, true))
-                    //
-                    //     MinimalColorWell(
-                    //         color = color,
-                    //         colors = listOf(
-                    //             listOf(Color.Red, Color.Green, Color.Blue),
-                    //             listOf(Color.Cyan, Color.Magenta, Color.Yellow)
-                    //         ),
-                    //         onColorChange = { color = it }
-                    //     )
-                    // }
-                }
-
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
-                ) {
-                    Row {
-                        Column {
-                            HexField(
-                                color = color,
-                                onColorChange = { color = it }
-                            )
-
-                            RgbField(
-                                color = color,
-                                onColorChange = { color = it }
-                            )
-
-                            HsvField(
-                                color = color,
-                                onColorChange = { color = it }
-                            )
-
-                            HslField(
+                            ColorCircle(
                                 color = color,
                                 onColorChange = { color = it }
                             )
                         }
 
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Row {
+                            Text("Standard Color Picker")
 
-                        Box(
-                            modifier = Modifier
-                                .requiredSize(100.dp)
-                                .background(color, MaterialTheme.shapes.medium)
-                        )
+                            Spacer(Modifier.weight(1f))
+
+                            StandardColorPicker(
+                                modifier = Modifier.size(100.dp),
+                                color = color,
+                                onColorChange = { color = it }
+                            )
+                        }
+
+                        Row {
+                            Text("Color Ring")
+
+                            Spacer(Modifier.weight(1f))
+
+                            ColorRing(
+                                color = color,
+                                onColorChange = { color = it }
+                            )
+                        }
+
+                        // Row {
+                        //     Text("Minimal Color Well")
+                        //
+                        //     Spacer(Modifier.weight(1f))
+                        //
+                        //     MinimalColorWell(
+                        //         color = color,
+                        //         colors = listOf(
+                        //             listOf(Color.Red, Color.Green, Color.Blue),
+                        //             listOf(Color.Cyan, Color.Magenta, Color.Yellow)
+                        //         ),
+                        //         onColorChange = { color = it }
+                        //     )
+                        // }
                     }
 
-                    Column {
-                        Text(
-                            text = "Hue",
-                            style = MaterialTheme.typography.titleMedium
-                        )
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+                        Row {
+                            Column {
+                                HexField(
+                                    color = color,
+                                    onColorChange = { color = it }
+                                )
 
-                        Spacer(Modifier.height(12.dp))
+                                RgbField(
+                                    color = color,
+                                    onColorChange = { color = it }
+                                )
 
-                        Slider(
-                            value = color.hue,
-                            onValueChange = {
-                                color = Color.hsv(it, color.saturation, color.hsvValue)
-                            },
-                            valueRange = 0f..360f,
-                            brush = Brush.horizontalGradient(
-                                listOf(
-                                    Color.Red,
-                                    Color.Yellow,
-                                    Color.Green,
-                                    Color.Cyan,
-                                    Color.Blue,
-                                    Color.Magenta,
-                                    Color.Red
+                                HsvField(
+                                    color = color,
+                                    onColorChange = { color = it }
+                                )
+
+                                HslField(
+                                    color = color,
+                                    onColorChange = { color = it }
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            Box(
+                                modifier = Modifier
+                                    .requiredSize(100.dp)
+                                    .background(color, MaterialTheme.shapes.medium)
+                            )
+                        }
+
+                        Column {
+                            Text(
+                                text = "Hue",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+
+                            Spacer(Modifier.height(12.dp))
+
+                            Slider(
+                                value = color.hue,
+                                onValueChange = {
+                                    color = Color.hsv(it, color.saturation, color.hsvValue)
+                                },
+                                valueRange = 0f..359f,
+                                brush = Brush.horizontalGradient(
+                                    listOf(
+                                        Color.Red,
+                                        Color.Yellow,
+                                        Color.Green,
+                                        Color.Cyan,
+                                        Color.Blue,
+                                        Color.Magenta,
+                                        Color.Red
+                                    )
                                 )
                             )
-                        )
-                    }
+                        }
 
-                    Column {
-                        Text(
-                            text = "Saturation",
-                            style = MaterialTheme.typography.titleMedium
-                        )
+                        Column {
+                            Text(
+                                text = "Saturation",
+                                style = MaterialTheme.typography.titleMedium
+                            )
 
-                        Spacer(Modifier.height(12.dp))
+                            Spacer(Modifier.height(12.dp))
 
-                        Slider(
-                            value = color.saturation,
-                            onValueChange = { color = Color.hsv(color.hue, it, color.hsvValue) },
-                            valueRange = 0f..1f,
-                            brush = Brush.horizontalGradient(
-                                listOf(
-                                    Color.White,
-                                    Color.hsv(color.hue, 1f, color.hsvValue)
+                            Slider(
+                                value = color.saturation,
+                                onValueChange = {
+                                    color = Color.hsv(color.hue, it, color.hsvValue)
+                                },
+                                valueRange = 0f..1f,
+                                brush = Brush.horizontalGradient(
+                                    listOf(
+                                        Color.White,
+                                        Color.hsv(color.hue, 1f, color.hsvValue)
+                                    )
                                 )
                             )
-                        )
-                    }
+                        }
 
-                    Column {
-                        Text(
-                            text = "Value",
-                            style = MaterialTheme.typography.titleMedium
-                        )
+                        Column {
+                            Text(
+                                text = "Value",
+                                style = MaterialTheme.typography.titleMedium
+                            )
 
-                        Spacer(Modifier.height(12.dp))
+                            Spacer(Modifier.height(12.dp))
 
-                        Slider(
-                            value = color.hsvValue,
-                            onValueChange = { color = Color.hsv(color.hue, color.saturation, it) },
-                            valueRange = 0f..1f,
-                            brush = Brush.horizontalGradient(
-                                listOf(
-                                    Color.Black,
-                                    Color.hsv(color.hue, color.saturation, 1f)
+                            Slider(
+                                value = color.hsvValue,
+                                onValueChange = {
+                                    color = Color.hsv(color.hue, color.saturation, it)
+                                },
+                                valueRange = 0f..1f,
+                                brush = Brush.horizontalGradient(
+                                    listOf(
+                                        Color.Black,
+                                        Color.hsv(color.hue, color.saturation, 1f)
+                                    )
                                 )
                             )
-                        )
+                        }
                     }
                 }
             }
