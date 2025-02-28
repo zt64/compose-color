@@ -1,10 +1,9 @@
-name: Build and deploy
+name: Build and deploy pages
 
 on:
   workflow_run:
-    workflows: [ "Check" ]
-    types:
-      - completed
+    workflows: [ Check ]
+    types: [ completed ]
 
 jobs:
   build:

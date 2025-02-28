@@ -1,4 +1,4 @@
-name: Check lint and tests
+name: Check
 
 on:
   push:
