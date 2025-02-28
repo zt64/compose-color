@@ -54,7 +54,8 @@ public fun StandardColorPicker(
                 modifier = modifier
                     .onSizeChanged {
                         size = it
-                    }.pointerInput(Unit) {
+                    }
+                    .pointerInput(Unit) {
                         detectDragGestures(
                             onDragStart = {
                                 offset = it
@@ -89,8 +90,8 @@ public fun StandardColorPicker(
             Box(
                 modifier = Modifier
                     .offset(
-                        x = offset.x.dp - 5.dp,
-                        y = offset.y.dp - 5.dp
+                        x = offset.x.dp - 8.dp,
+                        y = offset.y.dp - 8.dp
                     )
             ) {
                 magnifier()
@@ -99,20 +100,13 @@ public fun StandardColorPicker(
     }
 }
 
-private fun positionForColor(
-    color: Color,
-    size: IntSize
-): Offset {
+private fun positionForColor(color: Color, size: IntSize): Offset {
     val x = color.saturation * size.width
     val y = size.height - color.hsvValue * size.height
     return Offset(x, y)
 }
 
-private fun colorForPosition(
-    position: Offset,
-    size: IntSize,
-    hue: Float
-): Color {
+private fun colorForPosition(position: Offset, size: IntSize, hue: Float): Color {
     if (position.x < 0f || position.x > size.width || position.y < 0f || position.y > size.height) {
         return Color.Unspecified
     }

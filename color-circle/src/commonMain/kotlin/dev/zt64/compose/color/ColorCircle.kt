@@ -28,13 +28,15 @@ import kotlinx.coroutines.launch
 import kotlin.math.*
 
 /**
- * Color circle that allows the user to select a color by dragging a magnifier around the circle.
- * The color is represented in HSV color space.
+ * Color circle that allows the user to select a hue by dragging a magnifier around the circle.
+ * The color is represented in HSV color space with a fixed saturation and value.
  *
  * @param color The current color
  * @param onColorChange Callback that is called when the color changes
  * @param modifier
+ * @param interactionSource
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
+ * @param magnifier Composable that is used to draw the magnifier
  */
 @Composable
 public fun ColorCircle(
@@ -55,11 +57,11 @@ public fun ColorCircle(
     var radius by rememberSaveable {
         mutableStateOf(0f)
     }
-    var offsetX by rememberSaveable {
-        mutableStateOf(0f)
+    var offsetX by rememberSaveable(color) {
+        mutableStateOf(positionForColor(color, radius).x)
     }
-    var offsetY by rememberSaveable {
-        mutableStateOf(0f)
+    var offsetY by rememberSaveable(color) {
+        mutableStateOf(positionForColor(color, radius).y)
     }
 
     Box(
@@ -67,7 +69,8 @@ public fun ColorCircle(
             .size(100.dp)
             .onGloballyPositioned {
                 radius = it.size.width.toFloat() / 2f
-            }.pointerInput(Unit) {
+            }
+            .pointerInput(Unit) {
                 detectTapGestures { tapPosition ->
                     val newColor = colorForPosition(tapPosition, radius, color.hsvValue)
                     if (newColor.isSpecified) {
@@ -76,7 +79,8 @@ public fun ColorCircle(
                         onColorChange(newColor)
                     }
                 }
-            }.pointerInput(Unit) {
+            }
+            .pointerInput(Unit) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
 
@@ -111,8 +115,7 @@ public fun ColorCircle(
         )
 
         Box(
-            modifier = Modifier
-                .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+            modifier = Modifier.offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
         ) {
             magnifier(color)
         }
@@ -120,10 +123,7 @@ public fun ColorCircle(
 }
 
 @Composable
-internal fun ColorCircle(
-    value: Float,
-    modifier: Modifier = Modifier
-) {
+internal fun ColorCircle(value: Float, modifier: Modifier = Modifier) {
     val brush = remember(value) {
         Brush.sweepGradient(
             colors = List(7) { i ->
@@ -157,11 +157,7 @@ private val MagnifierPopupShape = GenericShape { size, _ ->
     close()
 }
 
-private fun colorForPosition(
-    position: Offset,
-    radius: Float,
-    value: Float
-): Color {
+private fun colorForPosition(position: Offset, radius: Float, value: Float): Color {
     val xOffset = position.x - radius
     val yOffset = position.y - radius
 
@@ -180,10 +176,7 @@ private fun colorForPosition(
     )
 }
 
-private fun positionForColor(
-    color: Color,
-    radius: Float
-): Offset {
+private fun positionForColor(color: Color, radius: Float): Offset {
     val saturation = color.saturation
 
     val angle = color.hue.toRadians()
@@ -197,10 +190,7 @@ private fun Float.toRadians(): Double = this * PI / 180
 
 private fun Float.toDegrees(): Double = this * 180 / PI
 
-private fun clampPositionToRadius(
-    position: Offset,
-    radius: Float
-): Offset {
+private fun clampPositionToRadius(position: Offset, radius: Float): Offset {
     val xOffset = position.x - radius
     val yOffset = position.y - radius
 
