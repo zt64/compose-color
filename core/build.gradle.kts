@@ -6,9 +6,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 plugins {
     id("kmp-library")
     alias(libs.plugins.compose.compiler)
-    // alias(libs.plugins.compose.jb)
-    // alias(libs.plugins.publish)
-    alias(libs.plugins.compatibility)
 }
 
 @OptIn(ExperimentalWasmDsl::class)
