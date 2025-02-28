@@ -15,11 +15,7 @@ internal val MagnifierRadius = 10.dp
 
 public object ColorPickerDefaults {
     @Composable
-    public fun Magnifier(
-        color: Color,
-        interactionSource: MutableInteractionSource,
-        modifier: Modifier = Modifier
-    ) {
+    public fun Magnifier(color: Color, interactionSource: MutableInteractionSource, modifier: Modifier = Modifier) {
         val isPressed by interactionSource.collectIsPressedAsState()
         val radius by animateDpAsState(
             targetValue = if (isPressed) MagnifierRadiusPressed else MagnifierRadius
@@ -28,7 +24,7 @@ public object ColorPickerDefaults {
         Canvas(modifier = modifier) {
             drawCircle(color, radius = radius.toPx())
 
-// Draw the border
+            // Draw the border
             drawCircle(
                 color = Color.Black,
                 radius = radius.toPx(),

@@ -38,17 +38,28 @@ public fun ColorRing(
     onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    thumb: @Composable () -> Unit = {
+    },
     onColorChangeFinished: () -> Unit = {}
 ) {
     var strokeWidth = remember { 16f }
     var radius by remember { mutableStateOf(0f) }
+    var center by remember { mutableStateOf(Offset.Zero) }
+    var handleCenter by remember {
+        // mutableStateOf(
+        //     Offset(
+        //         (radius.pow(2) * cos(color.hue * PI / 180)).toFloat(),
+        //         (radius.pow(2) * sin(color.hue * PI / 180)).toFloat()
+        //     )
+        // )
+        mutableStateOf(Offset.Zero)
+    }
 
-    var handleCenter by remember(color, radius) {
-        mutableStateOf(
-            Offset(
-                (radius.pow(2) * cos(color.hue * PI / 180)).toFloat(),
-                (radius.pow(2) * sin(color.hue * PI / 180)).toFloat()
-            )
+    fun updateHandlePosition(angle: Double) {
+        val rad = angle * PI / 180
+        handleCenter = center + Offset(
+            x = (radius + strokeWidth / 2) * cos(rad).toFloat(),
+            y = (radius + strokeWidth / 2) * sin(rad).toFloat()
         )
     }
 
@@ -68,9 +79,13 @@ public fun ColorRing(
         modifier = modifier
             .size(100.dp)
             .onSizeChanged {
-                radius = it.width / 2f
-            }.pointerInput(Unit) {
+                radius = (it.width - strokeWidth) / 2f
+                center = Offset(it.width / 2f, it.height / 2f)
+                updateHandlePosition(color.hue.toDouble())
+            }
+            .pointerInput(Unit) {
                 detectTapGestures {
+                    handleCenter = Offset.Zero + it
                     onColorChange(
                         Color.hsv(
                             hue = getRotationAngle(it, size.center.toOffset()).toFloat(),
@@ -80,19 +95,21 @@ public fun ColorRing(
                     )
                     onColorChangeFinished()
                 }
-            }.pointerInput(Unit) {
+            }
+            .pointerInput(Unit) {
                 detectDragGestures(
-                    onDragEnd = {
-                        onColorChangeFinished()
-                    }
-                ) { offset ->
-                    val newColor = Color.hsv(
-                        hue = getRotationAngle(offset, size.center.toOffset()).toFloat(),
-                        saturation = color.saturation,
-                        value = color.hsvValue
+                    onDragEnd = onColorChangeFinished
+                ) { change, _ ->
+                    val angle = getRotationAngle(change.position, center)
+                    updateHandlePosition(angle)
+                    onColorChange(
+                        Color.hsv(
+                            hue = angle.toFloat(),
+                            saturation = color.saturation,
+                            value = color.hsvValue
+                        )
                     )
-                    handleCenter = offset
-                    onColorChange(newColor)
+                    change.consume()
                 }
             }
     ) {
@@ -109,10 +126,7 @@ public fun ColorRing(
     }
 }
 
-private fun getRotationAngle(
-    currentPosition: Offset,
-    center: Offset
-): Double {
+private fun getRotationAngle(currentPosition: Offset, center: Offset): Double {
     val (dx, dy) = currentPosition - center
     val theta = atan2(dy, dx).toDouble()
 
