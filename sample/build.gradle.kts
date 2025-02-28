@@ -81,11 +81,11 @@ kotlin {
 
 android {
     namespace = "dev.zt64.compose.color.sample"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 35
     }
 }
 
