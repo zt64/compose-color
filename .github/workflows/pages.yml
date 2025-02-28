@@ -1,0 +1,50 @@
+name: Build and deploy
+
+on:
+  workflow_run:
+    workflows: [ "Check" ]
+    types:
+      - completed
+
+jobs:
+  build:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ vars.JVM_DISTRIBUTION }}
+          java-version: ${{ vars.JVM_VERSION }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build
+        run: ./gradlew :sample:wasmJsBrowserDistribution
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: sample/build/dist/wasmJs/productionExecutable
+
+  deploy:
+    if: github.event_name == 'push'
+    needs: build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy GitHub Pages site
+        uses: actions/deploy-pages@v4
