@@ -98,7 +98,7 @@ fun Sample() {
                     modifier = Modifier
                         .width(900.dp)
                         .padding(paddingValues)
-                        .padding(horizontal = 24.dp),
+                        .padding(vertical = 8.dp, horizontal = 24.dp),
                     horizontalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
                     Column(
