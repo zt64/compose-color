@@ -1,6 +1,5 @@
 package dev.zt64.compose.color.sample
 
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
@@ -24,8 +23,6 @@ fun Theme(color: Color, theme: Theme, content: @Composable () -> Unit) {
         seedColor = color,
         useDarkTheme = theme == Theme.DARK || theme == Theme.SYSTEM && isSystemInDarkTheme(),
         style = PaletteStyle.Fidelity,
-        content = content,
-        animate = true,
-        animationSpec = tween()
+        content = content
     )
 }
