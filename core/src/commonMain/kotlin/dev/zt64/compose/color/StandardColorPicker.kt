@@ -2,9 +2,10 @@ package dev.zt64.compose.color
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.listSaver
@@ -15,11 +16,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import dev.zt64.compose.color.util.hsvValue
 import dev.zt64.compose.color.util.hue
 import dev.zt64.compose.color.util.saturation
+import kotlinx.coroutines.launch
 
 /**
  * Standard color picker that allows the user to select a color by dragging a magnifier around the color space.
@@ -45,70 +47,90 @@ public fun StandardColorPicker(
     },
     onColorChangeFinished: () -> Unit = {}
 ) {
-    Column {
-        var size by remember { mutableStateOf(IntSize.Zero) }
-        var offset by rememberSaveable(
-            color,
-            stateSaver = listSaver(
-                save = { listOf(it.x, it.y) },
-                restore = { (x, y) -> Offset(x, y) }
-            )
+    var size by remember { mutableStateOf(IntSize.Zero) }
+    var offset by rememberSaveable(
+        color,
+        stateSaver = listSaver(
+            save = { listOf(it.x, it.y) },
+            restore = { (x, y) -> Offset(x, y) }
+        )
+    ) {
+        mutableStateOf(positionForColor(color, size))
+    }
+
+    Box {
+        val scope = rememberCoroutineScope()
+
+        Canvas(
+            modifier = modifier
+                .onSizeChanged { size = it }
+                .pointerInput(Unit) {
+                    var interaction: DragInteraction.Start? = null
+
+                    detectDragGestures(
+                        onDragStart = {
+                            offset = it
+                            scope.launch {
+                                interaction = DragInteraction.Start()
+                                interactionSource.emit(interaction)
+                            }
+                        },
+                        onDrag = { change, dragAmount ->
+                            change.consume()
+                            offset + dragAmount
+                            offset = change.position.let { (x, y) ->
+                                Offset(
+                                    x = x.coerceIn(0f, size.width.toFloat()),
+                                    y = y.coerceIn(0f, size.height.toFloat())
+                                )
+                            }
+                            onColorChange(colorForPosition(offset, size, color.hue))
+                        },
+                        onDragEnd = {
+                            scope.launch {
+                                interaction?.let {
+                                    interactionSource.emit(DragInteraction.Stop(it))
+                                }
+                            }
+                            onColorChangeFinished()
+                        },
+                        onDragCancel = {
+                            scope.launch {
+                                interaction?.let {
+                                    interactionSource.emit(DragInteraction.Cancel(it))
+                                }
+                            }
+                        }
+                    )
+                }
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = {
+                            offset = it
+                            onColorChange(colorForPosition(offset, size, color.hue))
+                            onColorChangeFinished()
+                        }
+                    )
+                }
         ) {
-            mutableStateOf(
-                positionForColor(
-                    color,
-                    size
+            drawRect(Color.White)
+            drawRect(
+                Brush.horizontalGradient(
+                    listOf(
+                        Color.Transparent,
+                        Color.hsv(color.hue, 1f, 1f)
+                    )
                 )
             )
+            drawRect(Brush.verticalGradient(listOf(Color.Transparent, Color.Black)))
         }
 
-        Box {
-            Canvas(
-                modifier = modifier
-                    .onSizeChanged {
-                        size = it
-                    }
-                    .pointerInput(Unit) {
-                        detectDragGestures(
-                            onDragStart = {
-                                offset = it
-                            },
-                            onDrag = { change, dragAmount ->
-                                change.consume()
-                                offset += dragAmount
-                                onColorChange(
-                                    colorForPosition(
-                                        offset,
-                                        IntSize(size.width, size.height),
-                                        color.hue
-                                    )
-                                )
-                            },
-                            onDragEnd = onColorChangeFinished
-                        )
-                    }
-            ) {
-                drawRect(Color.White)
-                drawRect(
-                    Brush.horizontalGradient(
-                        listOf(
-                            Color.Transparent,
-                            Color.hsv(color.hue, 1f, 1f)
-                        )
-                    )
-                )
-                drawRect(Brush.verticalGradient(listOf(Color.Transparent, Color.Black)))
+        Box(
+            modifier = Modifier.offset {
+                IntOffset(offset.x.toInt(), offset.y.toInt())
             }
-
-            Box(
-                modifier = Modifier
-                    .offset(
-                        x = offset.x.dp - 8.dp,
-                        y = offset.y.dp - 8.dp
-                    )
-            ) {
-                magnifier()
-            }
+        ) {
+            magnifier()
         }
     }
 }
@@ -123,11 +145,10 @@ private fun colorForPosition(position: Offset, size: IntSize, hue: Float): Color
     if (position.x < 0f || position.x > size.width || position.y < 0f || position.y > size.height) {
         return Color.Unspecified
     }
-    val saturation = position.x / size.width
-    val value = 1f - (position.y / size.height)
+
     return Color.hsv(
         hue = hue,
-        saturation = saturation,
-        value = value
+        saturation = position.x / size.width,
+        value = 1f - (position.y / size.height)
     )
 }
