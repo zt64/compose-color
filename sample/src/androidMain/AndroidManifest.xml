@@ -4,6 +4,7 @@
     <application tools:ignore="MissingApplicationIcon">
         <activity
             android:name=".MainActivity"
+            android:label="Compose Color Sample"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>
