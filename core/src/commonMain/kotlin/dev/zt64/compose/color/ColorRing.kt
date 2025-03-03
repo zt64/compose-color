@@ -51,15 +51,13 @@ public fun ColorRing(
     var strokeWidth = remember { 16f }
     var radius by remember { mutableStateOf(0f) }
     var center by remember { mutableStateOf(Offset.Zero) }
-    var handleCenter by remember {
-        mutableStateOf(Offset.Zero)
-    }
+    var handleCenter by remember { mutableStateOf(Offset.Zero) }
 
-    fun updateHandlePosition(angle: Double) {
-        val rad = angle * PI / 180
+    fun updateHandlePosition(angle: Float) {
+        val rad = angle * (PI / 180).toFloat()
         handleCenter = center + Offset(
-            x = (radius + strokeWidth / 2) * cos(rad).toFloat(),
-            y = (radius + strokeWidth / 2) * sin(rad).toFloat()
+            x = radius * cos(rad),
+            y = radius * sin(rad)
         )
     }
 
@@ -81,7 +79,7 @@ public fun ColorRing(
             .onSizeChanged {
                 radius = (it.width - strokeWidth) / 2f
                 center = Offset(it.width / 2f, it.height / 2f)
-                updateHandlePosition(color.hue.toDouble())
+                updateHandlePosition(color.hue)
             }
             .pointerInput(Unit) {
                 detectTapGestures {
@@ -113,8 +111,10 @@ public fun ColorRing(
                 }
             }
     ) {
+        val adjustedRadius = (size.minDimension / 2) - (strokeWidth / 2f)
         drawCircle(
             brush = brush,
+            radius = adjustedRadius,
             style = Stroke(strokeWidth)
         )
 
@@ -126,14 +126,12 @@ public fun ColorRing(
     }
 }
 
-private fun getRotationAngle(currentPosition: Offset, center: Offset): Double {
+private fun getRotationAngle(currentPosition: Offset, center: Offset): Float {
     val (dx, dy) = currentPosition - center
-    val theta = atan2(dy, dx).toDouble()
+    val theta = atan2(dy, dx)
 
-    var angle = theta * (180.0 / PI)
+    var angle = theta * (180.0 / PI).toFloat()
 
-    if (angle < 0) {
-        angle += 360.0
-    }
+    if (angle < 0) angle += 360f
     return angle
 }
