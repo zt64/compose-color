@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
@@ -24,12 +25,12 @@ fun HexField(color: Color, onColorChange: (Color) -> Unit) {
                 append(r.toString(16).padStart(2, '0'))
                 append(g.toString(16).padStart(2, '0'))
                 append(b.toString(16).padStart(2, '0'))
-            }
+            }.uppercase()
         }
     }
 
     FormatField(
-        label = "HEX",
+        label = "Hex",
         value = hex,
         onValueChange = {
             if (it.isNotEmpty()) {
@@ -132,9 +133,16 @@ fun HslField(color: Color, onColorChange: (Color) -> Unit) {
 
 @Composable
 fun FormatField(label: String, value: String, onValueChange: (String) -> Boolean, modifier: Modifier = Modifier) {
-    var isError by remember { mutableStateOf(false) }
+    var isError by rememberSaveable { mutableStateOf(false) }
 
     TextField(
+        modifier = modifier
+            .width(IntrinsicSize.Max)
+            .onFocusChanged {
+                if (!it.isFocused) {
+                    isError = false
+                }
+            },
         value = value,
         onValueChange = {
             isError = !onValueChange(it)
@@ -148,11 +156,6 @@ fun FormatField(label: String, value: String, onValueChange: (String) -> Boolean
             null
         },
         isError = isError,
-        singleLine = true,
-        modifier = modifier.width(IntrinsicSize.Max).onFocusChanged {
-            if (!it.isFocused) {
-                isError = false
-            }
-        }
+        singleLine = true
     )
 }

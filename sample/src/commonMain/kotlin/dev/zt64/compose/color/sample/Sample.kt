@@ -7,12 +7,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import dev.zt64.compose.color.ColorCircle
 import dev.zt64.compose.color.ColorRing
@@ -21,7 +23,7 @@ import dev.zt64.compose.color.util.hsvValue
 import dev.zt64.compose.color.util.hue
 import dev.zt64.compose.color.util.saturation
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun Sample() {
     var color by remember { mutableStateOf(Color.Red) }
@@ -37,6 +39,18 @@ fun Sample() {
                     title = { Text("Compose Color Sample") },
                     actions = {
                         var expanded by remember { mutableStateOf(false) }
+                        val uriHandler = LocalUriHandler.current
+
+                        IconButton(
+                            onClick = {
+                                uriHandler.openUri("https://github.com/zt64/compose-color")
+                            }
+                        ) {
+                            Icon(
+                                imageVector = GithubIcon,
+                                contentDescription = null
+                            )
+                        }
 
                         Box {
                             DropdownMenu(
@@ -93,77 +107,17 @@ fun Sample() {
                 )
             }
         ) { paddingValues ->
-            Box {
-                Row(
-                    modifier = Modifier
-                        .width(900.dp)
-                        .padding(paddingValues)
-                        .padding(vertical = 8.dp, horizontal = 24.dp),
-                    horizontalArrangement = Arrangement.spacedBy(24.dp)
-                ) {
+            val first = remember {
+                movableContentOf {
                     Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                        verticalArrangement = Arrangement.spacedBy(18.dp)
                     ) {
-                        Row {
-                            Text("Color Circle")
-
-                            Spacer(Modifier.weight(1f))
-
-                            ColorCircle(
-                                color = color,
-                                onColorChange = { color = it }
-                            )
-                        }
-
-                        Row {
-                            Text("Standard Color Picker")
-
-                            Spacer(Modifier.weight(1f))
-
-                            StandardColorPicker(
-                                modifier = Modifier.size(100.dp),
-                                color = color,
-                                onColorChange = { color = it }
-                            )
-                        }
-
-                        Row {
-                            Text("Color Ring")
-
-                            Spacer(Modifier.weight(1f))
-
-                            ColorRing(
-                                color = color,
-                                onColorChange = { color = it }
-                            )
-                        }
-
-                        // Row {
-                        //     Text("Minimal Color Well")
-                        //
-                        //     Spacer(Modifier.weight(1f))
-                        //
-                        //     MinimalColorWell(
-                        //         color = color,
-                        //         colors = listOf(
-                        //             listOf(Color.Red, Color.Green, Color.Blue),
-                        //             listOf(Color.Cyan, Color.Magenta, Color.Yellow)
-                        //         ),
-                        //         onColorChange = { color = it }
-                        //     )
-                        // }
-                    }
-
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(24.dp)
-                    ) {
-                        Row {
-                            Column {
+                        Row(
+                            modifier = Modifier.height(IntrinsicSize.Min)
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxHeight()
+                            ) {
                                 HexField(
                                     color = color,
                                     onColorChange = { color = it }
@@ -189,7 +143,8 @@ fun Sample() {
 
                             Box(
                                 modifier = Modifier
-                                    .requiredSize(100.dp)
+                                    .width(100.dp)
+                                    .fillMaxHeight()
                                     .background(color, MaterialTheme.shapes.medium)
                             )
                         }
@@ -200,10 +155,15 @@ fun Sample() {
                                 style = MaterialTheme.typography.titleMedium
                             )
 
-                            Spacer(Modifier.height(12.dp))
+                            Spacer(Modifier.height(8.dp))
 
+                            val hue by remember(color) {
+                                derivedStateOf {
+                                    color.hue
+                                }
+                            }
                             Slider(
-                                value = color.hue,
+                                value = hue,
                                 onValueChange = {
                                     color = Color.hsv(it, color.saturation, color.hsvValue)
                                 },
@@ -228,7 +188,7 @@ fun Sample() {
                                 style = MaterialTheme.typography.titleMedium
                             )
 
-                            Spacer(Modifier.height(12.dp))
+                            Spacer(Modifier.height(8.dp))
 
                             Slider(
                                 value = color.saturation,
@@ -251,7 +211,7 @@ fun Sample() {
                                 style = MaterialTheme.typography.titleMedium
                             )
 
-                            Spacer(Modifier.height(12.dp))
+                            Spacer(Modifier.height(8.dp))
 
                             Slider(
                                 value = color.hsvValue,
@@ -270,6 +230,105 @@ fun Sample() {
                     }
                 }
             }
+            val second = remember {
+                movableContentOf {
+                    FlowRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Color Circle")
+
+                            Spacer(Modifier.height(6.dp))
+
+                            ColorCircle(
+                                color = color,
+                                onColorChange = { color = it }
+                            )
+                        }
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Standard Color Picker")
+
+                            Spacer(Modifier.height(6.dp))
+
+                            StandardColorPicker(
+                                modifier = Modifier.size(100.dp),
+                                color = color,
+                                onColorChange = { color = it }
+                            )
+                        }
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Color Ring")
+
+                            Spacer(Modifier.height(6.dp))
+
+                            ColorRing(
+                                color = color,
+                                onColorChange = { color = it }
+                            )
+                        }
+
+                        // Row {
+                        //     Text("Minimal Color Well")
+                        //
+                        //     Spacer(Modifier.weight(1f))
+                        //
+                        //     MinimalColorWell(
+                        //         color = color,
+                        //         colors = listOf(
+                        //             listOf(Color.Red, Color.Green, Color.Blue),
+                        //             listOf(Color.Cyan, Color.Magenta, Color.Yellow)
+                        //         ),
+                        //         onColorChange = { color = it }
+                        //     )
+                        // }
+                    }
+                }
+            }
+            BoxWithConstraints(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(vertical = 8.dp, horizontal = 24.dp)
+            ) {
+                when {
+                    maxWidth < 900.dp -> {
+                        Column(
+                            modifier = Modifier.verticalScroll(rememberScrollState())
+                        ) {
+                            first()
+                            second()
+                        }
+                    }
+
+                    else -> {
+                        Row {
+                            first()
+                            second()
+                        }
+                    }
+                }
+            }
+            // FlowRow(
+            //     modifier = Modifier
+            //         .fillMaxSize()
+            //         .padding(paddingValues)
+            //         .padding(vertical = 8.dp, horizontal = 24.dp),
+            //     maxItemsInEachRow = 1,
+            //     horizontalArrangement = Arrangement.spacedBy(24.dp)
+            // ) {
+            // }
         }
     }
 }
@@ -295,8 +354,9 @@ private fun Slider(
         track = {
             Canvas(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .widthIn(max = 900.dp)
                     .height(12.dp)
+                    .fillMaxWidth()
             ) {
                 drawLine(
                     brush = brush,
