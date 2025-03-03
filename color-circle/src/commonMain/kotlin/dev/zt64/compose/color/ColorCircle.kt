@@ -46,10 +46,7 @@ public fun ColorCircle(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onColorChangeFinished: () -> Unit = {},
     magnifier: @Composable (Color) -> Unit = {
-        ColorPickerDefaults.Magnifier(
-            color = color,
-            interactionSource = interactionSource
-        )
+        ColorPickerDefaults.Magnifier(color, interactionSource)
     }
 ) {
     val scope = rememberCoroutineScope()

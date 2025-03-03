@@ -3,22 +3,32 @@ package dev.zt64.compose.color
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 
 internal val MagnifierRadiusPressed = 20.dp
 internal val MagnifierRadius = 10.dp
 
 public object ColorPickerDefaults {
+    /**
+     * Default implementation of the magnifier used in the color picker.
+     *
+     * @param color The color of the magnifier
+     * @param interactionSource The interaction source for the magnifier
+     * @param modifier The modifier for the magnifier
+     */
     @Composable
     public fun Magnifier(color: Color, interactionSource: MutableInteractionSource, modifier: Modifier = Modifier) {
         val isPressed by interactionSource.collectIsPressedAsState()
+        val isDragged by interactionSource.collectIsDraggedAsState()
         val radius by animateDpAsState(
-            targetValue = if (isPressed) MagnifierRadiusPressed else MagnifierRadius
+            targetValue = if (isPressed || isDragged) MagnifierRadiusPressed else MagnifierRadius
         )
 
         Canvas(modifier = modifier) {
@@ -29,7 +39,7 @@ public object ColorPickerDefaults {
                 color = Color.Black,
                 radius = radius.toPx(),
                 alpha = 0.5f,
-                style = androidx.compose.ui.graphics.drawscope.Stroke(1.dp.toPx())
+                style = Stroke(1.dp.toPx())
             )
         }
     }
