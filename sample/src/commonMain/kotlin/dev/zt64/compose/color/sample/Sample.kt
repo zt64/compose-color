@@ -1,19 +1,20 @@
 package dev.zt64.compose.color.sample
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.center
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import dev.zt64.compose.color.ColorCircle
@@ -26,9 +27,15 @@ import dev.zt64.compose.color.util.saturation
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun Sample() {
-    var color by remember { mutableStateOf(Color.Red) }
-    var theme by remember { mutableStateOf(Theme.SYSTEM) }
-
+    var color by rememberSaveable(
+        stateSaver = listSaver(
+            save = { listOf(it.toArgb()) },
+            restore = { Color(it[0]) }
+        )
+    ) {
+        mutableStateOf(Color.Red)
+    }
+    var theme by rememberSaveable { mutableStateOf(Theme.SYSTEM) }
     Theme(
         color = color,
         theme = theme
@@ -332,14 +339,31 @@ private fun Slider(
     valueRange: ClosedFloatingPointRange<Float>,
     brush: Brush
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     Slider(
         value = value,
         onValueChange = onValueChange,
         thumb = {
-            Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .background(Color.White, CircleShape)
+            val interactions = remember { mutableStateListOf<Interaction>() }
+            LaunchedEffect(interactionSource) {
+                interactionSource.interactions.collect { interaction ->
+                    when (interaction) {
+                        is PressInteraction.Press -> interactions.add(interaction)
+                        is PressInteraction.Release -> interactions.remove(interaction.press)
+                        is PressInteraction.Cancel -> interactions.remove(interaction.press)
+                        is DragInteraction.Start -> interactions.add(interaction)
+                        is DragInteraction.Stop -> interactions.remove(interaction.start)
+                        is DragInteraction.Cancel -> interactions.remove(interaction.start)
+                    }
+                }
+            }
+
+            val size = if (interactions.isNotEmpty()) 28.dp else 24.dp
+            Spacer(
+                Modifier
+                    .size(size)
+                    .hoverable(interactionSource = interactionSource)
+                    .background(MaterialTheme.colorScheme.primary, CircleShape)
             )
         },
         track = {
@@ -358,6 +382,7 @@ private fun Slider(
                 )
             }
         },
-        valueRange = valueRange
+        valueRange = valueRange,
+        interactionSource = interactionSource
     )
 }
