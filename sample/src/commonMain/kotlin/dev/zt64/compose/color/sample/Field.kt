@@ -1,7 +1,6 @@
 package dev.zt64.compose.color.sample
 
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
@@ -9,6 +8,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import dev.zt64.compose.color.util.*
 import kotlin.math.roundToInt
 
@@ -137,11 +137,9 @@ fun FormatField(label: String, value: String, onValueChange: (String) -> Boolean
 
     TextField(
         modifier = modifier
-            .width(IntrinsicSize.Max)
+            .widthIn(min = 180.dp, max = 240.dp)
             .onFocusChanged {
-                if (!it.isFocused) {
-                    isError = false
-                }
+                if (!it.isFocused) isError = false
             },
         value = value,
         onValueChange = {

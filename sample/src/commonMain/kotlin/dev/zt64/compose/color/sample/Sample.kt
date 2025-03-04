@@ -233,9 +233,7 @@ fun Sample() {
             val second = remember {
                 movableContentOf {
                     FlowRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(),
+                        modifier = Modifier.fillMaxSize(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
@@ -303,9 +301,11 @@ fun Sample() {
                     .padding(vertical = 8.dp, horizontal = 24.dp)
             ) {
                 when {
-                    maxWidth < 900.dp -> {
+                    maxWidth < 1000.dp -> {
                         Column(
-                            modifier = Modifier.verticalScroll(rememberScrollState())
+                            modifier = Modifier
+                                .matchParentSize()
+                                .verticalScroll(rememberScrollState())
                         ) {
                             first()
                             second()
@@ -320,15 +320,6 @@ fun Sample() {
                     }
                 }
             }
-            // FlowRow(
-            //     modifier = Modifier
-            //         .fillMaxSize()
-            //         .padding(paddingValues)
-            //         .padding(vertical = 8.dp, horizontal = 24.dp),
-            //     maxItemsInEachRow = 1,
-            //     horizontalArrangement = Arrangement.spacedBy(24.dp)
-            // ) {
-            // }
         }
     }
 }
@@ -354,7 +345,7 @@ private fun Slider(
         track = {
             Canvas(
                 modifier = Modifier
-                    .widthIn(max = 900.dp)
+                    .widthIn(max = 700.dp)
                     .height(12.dp)
                     .fillMaxWidth()
             ) {
@@ -362,7 +353,7 @@ private fun Slider(
                     brush = brush,
                     start = Offset(0f, size.center.y),
                     end = Offset(size.width, size.center.y),
-                    strokeWidth = size.height.dp.toPx(),
+                    strokeWidth = size.height,
                     cap = StrokeCap.Round
                 )
             }
