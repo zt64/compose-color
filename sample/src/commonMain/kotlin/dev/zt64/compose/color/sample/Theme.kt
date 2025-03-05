@@ -5,6 +5,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -18,11 +21,23 @@ enum class Theme(val icon: ImageVector, val label: String) {
 }
 
 @Composable
-fun Theme(color: Color, theme: Theme, content: @Composable () -> Unit) {
-    DynamicMaterialTheme(
-        seedColor = color,
-        useDarkTheme = theme == Theme.DARK || theme == Theme.SYSTEM && isSystemInDarkTheme(),
-        style = PaletteStyle.Fidelity,
-        content = content
-    )
+fun Theme(color: Color, theme: Theme, useDynamicTheme: Boolean, content: @Composable () -> Unit) {
+    if (useDynamicTheme) {
+        DynamicMaterialTheme(
+            seedColor = color,
+            useDarkTheme = theme == Theme.DARK || theme == Theme.SYSTEM && isSystemInDarkTheme(),
+            style = PaletteStyle.Fidelity,
+            content = content
+        )
+    } else {
+        MaterialTheme(
+            colorScheme = if (theme == Theme.DARK || theme == Theme.SYSTEM && isSystemInDarkTheme()) {
+                darkColorScheme()
+            } else {
+                lightColorScheme()
+            }
+        ) {
+            content()
+        }
+    }
 }

@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.SwitchLeft
+import androidx.compose.material.icons.filled.SwitchRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.listSaver
@@ -36,9 +38,12 @@ fun Sample() {
         mutableStateOf(Color.Red)
     }
     var theme by rememberSaveable { mutableStateOf(Theme.SYSTEM) }
+    var useDynamicTheme by rememberSaveable { mutableStateOf(false) }
+
     Theme(
         color = color,
-        theme = theme
+        theme = theme,
+        useDynamicTheme = useDynamicTheme
     ) {
         Scaffold(
             topBar = {
@@ -55,6 +60,17 @@ fun Sample() {
                         ) {
                             Icon(
                                 imageVector = GithubIcon,
+                                contentDescription = null
+                            )
+                        }
+
+                        IconButton(
+                            onClick = {
+                                useDynamicTheme = !useDynamicTheme
+                            }
+                        ) {
+                            Icon(
+                                imageVector = if (useDynamicTheme) Icons.Default.SwitchLeft else Icons.Default.SwitchRight,
                                 contentDescription = null
                             )
                         }
@@ -237,6 +253,7 @@ fun Sample() {
                     }
                 }
             }
+
             val second = remember {
                 movableContentOf {
                     FlowRow(
@@ -301,6 +318,7 @@ fun Sample() {
                     }
                 }
             }
+
             BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxSize()
