@@ -50,6 +50,7 @@ public fun StandardColorPicker(
     var size by remember { mutableStateOf(IntSize.Zero) }
     var offset by rememberSaveable(
         color,
+        size,
         stateSaver = listSaver(
             save = { listOf(it.x, it.y) },
             restore = { (x, y) -> Offset(x, y) }

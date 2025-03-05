@@ -7,13 +7,10 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.isSpecified
@@ -51,14 +48,9 @@ public fun ColorCircle(
 ) {
     val scope = rememberCoroutineScope()
     val color by rememberUpdatedState(color)
-    var radius by rememberSaveable {
-        mutableStateOf(0f)
-    }
-    var offsetX by rememberSaveable(color) {
-        mutableStateOf(positionForColor(color, radius).x)
-    }
-    var offsetY by rememberSaveable(color) {
-        mutableStateOf(positionForColor(color, radius).y)
+    var radius by rememberSaveable { mutableStateOf(0f) }
+    val position = remember(color, radius) {
+        positionForColor(color, radius)
     }
 
     Box(
@@ -71,8 +63,7 @@ public fun ColorCircle(
                 detectTapGestures { tapPosition ->
                     val newColor = colorForPosition(tapPosition, radius, color.hsvValue)
                     if (newColor.isSpecified) {
-                        offsetX = tapPosition.x
-                        offsetY = tapPosition.y
+                        // offset = tapPosition
                         onColorChange(newColor)
                     }
                 }
@@ -92,8 +83,7 @@ public fun ColorCircle(
                         val newPosition = clampPositionToRadius(change.position, radius)
                         val newColor = colorForPosition(newPosition, radius, color.hsvValue)
                         if (newColor.isSpecified) {
-                            offsetX = newPosition.x
-                            offsetY = newPosition.y
+                            // offset = newPosition
                             onColorChange(newColor)
                         }
                     }
@@ -112,7 +102,9 @@ public fun ColorCircle(
         )
 
         Box(
-            modifier = Modifier.offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+            modifier = Modifier.offset {
+                IntOffset(position.x.roundToInt(), position.y.roundToInt())
+            }
         ) {
             magnifier(color)
         }
@@ -139,21 +131,6 @@ internal fun ColorCircle(value: Float, modifier: Modifier = Modifier) {
     }
 }
 
-private val MagnifierPopupShape = GenericShape { size, _ ->
-    val width = size.width
-    val height = size.height
-
-    val arrowY = height * 0.8f
-    val arrowXOffset = width * 0.4f
-
-    addRoundRect(RoundRect(0f, 0f, width, arrowY, cornerRadius = CornerRadius(20f, 20f)))
-
-    moveTo(arrowXOffset, arrowY)
-    lineTo(width / 2f, height)
-    lineTo(width - arrowXOffset, arrowY)
-    close()
-}
-
 private fun colorForPosition(position: Offset, radius: Float, value: Float): Color {
     val xOffset = position.x - radius
     val yOffset = position.y - radius
@@ -168,8 +145,7 @@ private fun colorForPosition(position: Offset, radius: Float, value: Float): Col
     return Color.hsv(
         hue = centerAngle.toFloat(),
         saturation = centerOffset / radius,
-        value = value,
-        alpha = 1.0f
+        value = value
     )
 }
 
