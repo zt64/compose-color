@@ -21,7 +21,12 @@ class KmpBasePlugin : Plugin<Project> {
             jvm()
             apple()
             js {
-                browser()
+                browser {
+                    testTask {
+                        // See: https://youtrack.jetbrains.com/issue/CMP-4906/1nMakeRasterN32Premul-is-not-defined-when-running-runComposeUiTest-with-js
+                        enabled = false
+                    }
+                }
             }
 
             wasmJs {
