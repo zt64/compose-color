@@ -1,6 +1,7 @@
-# compose-color
+# 🎨 compose-color
 
-🎨 Compose multiplatform color picker
+A multiplatform color picker for Jetpack Compose, featuring components for selecting colors. Designed to be minimal and
+dependency-free.
 
 ## Styles
 
@@ -21,6 +22,15 @@ ColorCircle(
 <details>
 <summary>Color Square</summary>
 
+```kotlin
+var color = remember { mutableStateOf(Color.Red) }
+
+ColorSquare(
+    color = color,
+    onColorChange = { color = it }
+)
+```
+
 </details>
 
 <details>
@@ -34,13 +44,6 @@ ColorRing(
     onColorChange = { color = it }
 )
 ```
-
-</details>
-
-<details>
-<summary>Color Well</summary>
-* Apple color
-  picker [https://developer.apple.com/documentation/appkit/nscolorwell](https://developer.apple.com/documentation/appkit/nscolorwell)
 
 </details>
 
