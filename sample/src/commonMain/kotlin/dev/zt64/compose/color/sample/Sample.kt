@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import dev.zt64.compose.color.ColorCircle
@@ -45,9 +46,13 @@ fun Sample() {
         theme = theme,
         useDynamicTheme = useDynamicTheme
     ) {
+        val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
         Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 TopAppBar(
+                    scrollBehavior = scrollBehavior,
                     title = { Text("Compose Color Sample") },
                     actions = {
                         var expanded by remember { mutableStateOf(false) }
@@ -65,9 +70,7 @@ fun Sample() {
                         }
 
                         IconButton(
-                            onClick = {
-                                useDynamicTheme = !useDynamicTheme
-                            }
+                            onClick = { useDynamicTheme = !useDynamicTheme }
                         ) {
                             Icon(
                                 imageVector = if (useDynamicTheme) Icons.Default.SwitchLeft else Icons.Default.SwitchRight,
@@ -181,9 +184,7 @@ fun Sample() {
                             Spacer(Modifier.height(8.dp))
 
                             val hue by remember(color) {
-                                derivedStateOf {
-                                    color.hue
-                                }
+                                derivedStateOf { color.hue }
                             }
                             Slider(
                                 value = hue,
