@@ -12,23 +12,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 
-internal val MagnifierRadiusPressed = 20.dp
-internal val MagnifierRadius = 10.dp
+internal val ThumbRadiusPressed = 20.dp
+internal val ThumbRadius = 10.dp
 
 public object ColorPickerDefaults {
     /**
-     * Default implementation of the magnifier used in the color picker.
+     * Default implementation of the thumb used in the color picker.
      *
-     * @param color The color of the magnifier
-     * @param interactionSource The interaction source for the magnifier
-     * @param modifier The modifier for the magnifier
+     * @param color The color of the thumb
+     * @param interactionSource The interaction source for the thumb
+     * @param modifier The modifier for the thumb
      */
     @Composable
-    public fun Magnifier(color: Color, interactionSource: MutableInteractionSource, modifier: Modifier = Modifier) {
+    public fun Thumb(color: Color, interactionSource: MutableInteractionSource, modifier: Modifier = Modifier) {
         val isPressed by interactionSource.collectIsPressedAsState()
         val isDragged by interactionSource.collectIsDraggedAsState()
         val radius by animateDpAsState(
-            targetValue = if (isPressed || isDragged) MagnifierRadiusPressed else MagnifierRadius
+            targetValue = if (isPressed || isDragged) ThumbRadiusPressed else ThumbRadius
         )
 
         Canvas(modifier = modifier) {

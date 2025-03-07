@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import dev.zt64.compose.color.ColorCircle
 import dev.zt64.compose.color.ColorRing
-import dev.zt64.compose.color.StandardColorPicker
+import dev.zt64.compose.color.ColorSquare
 import dev.zt64.compose.color.util.hsvValue
 import dev.zt64.compose.color.util.hue
 import dev.zt64.compose.color.util.saturation
@@ -282,7 +282,7 @@ fun Sample() {
 
                             Spacer(Modifier.height(6.dp))
 
-                            StandardColorPicker(
+                            ColorSquare(
                                 modifier = Modifier.size(100.dp),
                                 color = color,
                                 onColorChange = { color = it }

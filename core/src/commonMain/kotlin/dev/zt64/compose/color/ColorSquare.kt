@@ -24,26 +24,26 @@ import dev.zt64.compose.color.util.saturation
 import kotlinx.coroutines.launch
 
 /**
- * Standard color picker that allows the user to select a color by dragging a magnifier around the color space.
+ * Standard color picker that allows the user to select a color by dragging a thumb around the color space.
  *
  * The color is represented in HSV color space with a fixed hue. The saturation and value can be controlled by
- * dragging the magnifier.
+ * dragging the thumb.
  *
  * @param color The current color
  * @param onColorChange Callback that is called when the color changes
  * @param modifier
  * @param interactionSource
- * @param magnifier Composable that is used to draw the magnifier
+ * @param thumb Composable that is used to draw the thumb
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  */
 @Composable
-public fun StandardColorPicker(
+public fun ColorSquare(
     color: Color,
     onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    magnifier: @Composable () -> Unit = {
-        ColorPickerDefaults.Magnifier(color, interactionSource)
+    thumb: @Composable () -> Unit = {
+        ColorPickerDefaults.Thumb(color, interactionSource)
     },
     onColorChangeFinished: () -> Unit = {}
 ) {
@@ -131,7 +131,7 @@ public fun StandardColorPicker(
                 IntOffset(offset.x.toInt(), offset.y.toInt())
             }
         ) {
-            magnifier()
+            thumb()
         }
     }
 }
