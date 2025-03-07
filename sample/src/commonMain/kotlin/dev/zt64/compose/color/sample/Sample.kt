@@ -283,7 +283,6 @@ fun Sample() {
                             Spacer(Modifier.height(6.dp))
 
                             ColorSquare(
-                                modifier = Modifier.size(100.dp),
                                 color = color,
                                 onColorChange = { color = it }
                             )
@@ -301,21 +300,6 @@ fun Sample() {
                                 onColorChange = { color = it }
                             )
                         }
-
-                        // Row {
-                        //     Text("Minimal Color Well")
-                        //
-                        //     Spacer(Modifier.weight(1f))
-                        //
-                        //     MinimalColorWell(
-                        //         color = color,
-                        //         colors = listOf(
-                        //             listOf(Color.Red, Color.Green, Color.Blue),
-                        //             listOf(Color.Cyan, Color.Magenta, Color.Yellow)
-                        //         ),
-                        //         onColorChange = { color = it }
-                        //     )
-                        // }
                     }
                 }
             }

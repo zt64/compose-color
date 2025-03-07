@@ -64,6 +64,7 @@ public fun ColorSquare(
 
         Canvas(
             modifier = modifier
+                .size(100.dp)
                 .onSizeChanged { size = it }
                 .pointerInput(Unit) {
                     var interaction: DragInteraction.Start? = null
