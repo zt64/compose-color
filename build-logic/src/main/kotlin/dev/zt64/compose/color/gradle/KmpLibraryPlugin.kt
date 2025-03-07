@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
@@ -21,21 +22,12 @@ class KmpLibraryPlugin : Plugin<Project> {
         configurePublishing(target)
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     private fun configureKmp(target: Project) {
         target.apply(plugin = "kmp-base")
 
         target.configure<KotlinMultiplatformExtension> {
             explicitApi()
-
-            jvm()
-            apple()
-            js {
-                browser()
-            }
-
-            wasmJs {
-                browser()
-            }
 
             sourceSets {
                 commonMain {

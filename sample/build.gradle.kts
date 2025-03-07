@@ -1,4 +1,3 @@
-import dev.zt64.compose.color.gradle.apple
 import org.jetbrains.compose.resources.ResourcesExtension
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
@@ -11,37 +10,7 @@ plugins {
 
 @OptIn(ExperimentalWasmDsl::class)
 kotlin {
-    jvm()
-
     androidTarget()
-
-    apple {
-        binaries.framework {
-            baseName = "shared"
-            isStatic = true
-        }
-    }
-
-    wasmJs {
-        moduleName = "sample"
-        browser {
-            commonWebpackConfig {
-                outputFileName = "sample.js"
-            }
-        }
-        binaries.executable()
-    }
-
-    // cocoapods {
-    //     version = "1.0.0"
-    //     summary = "Some description for the Shared Module"
-    //     homepage = "Link to the Shared Module homepage"
-    //     ios.deploymentTarget = "14.1"
-    //     podfile = project.file("./iosApp/Podfile")
-    //     framework {
-    //         baseName = "shared"
-    //     }
-    // }
 
     sourceSets {
         commonMain {
