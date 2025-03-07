@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -18,6 +19,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import dev.zt64.compose.color.util.hsvValue
 import dev.zt64.compose.color.util.hue
 import dev.zt64.compose.color.util.saturation
@@ -48,7 +50,7 @@ public fun ColorSquare(
     onColorChangeFinished: () -> Unit = {}
 ) {
     var size by remember { mutableStateOf(IntSize.Zero) }
-    var offset by rememberSaveable(
+    val offset by rememberSaveable(
         color,
         size,
         stateSaver = listSaver(
@@ -71,22 +73,13 @@ public fun ColorSquare(
 
                     detectDragGestures(
                         onDragStart = {
-                            offset = it
                             scope.launch {
                                 interaction = DragInteraction.Start()
                                 interactionSource.emit(interaction)
                             }
                         },
-                        onDrag = { change, dragAmount ->
-                            change.consume()
-                            offset + dragAmount
-                            offset = change.position.let { (x, y) ->
-                                Offset(
-                                    x = x.coerceIn(0f, size.width.toFloat()),
-                                    y = y.coerceIn(0f, size.height.toFloat())
-                                )
-                            }
-                            onColorChange(colorForPosition(offset, size, color.hue))
+                        onDrag = { change, _ ->
+                            onColorChange(colorForPosition(change.position, size, color.hue))
                         },
                         onDragEnd = {
                             scope.launch {
@@ -108,8 +101,7 @@ public fun ColorSquare(
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onTap = {
-                            offset = it
-                            onColorChange(colorForPosition(offset, size, color.hue))
+                            onColorChange(colorForPosition(it, size, color.hue))
                             onColorChangeFinished()
                         }
                     )
@@ -144,13 +136,12 @@ private fun positionForColor(color: Color, size: IntSize): Offset {
 }
 
 private fun colorForPosition(position: Offset, size: IntSize, hue: Float): Color {
-    if (position.x < 0f || position.x > size.width || position.y < 0f || position.y > size.height) {
-        return Color.Unspecified
-    }
+    val clampedX = position.x.coerceIn(0f, size.width.toFloat())
+    val clampedY = position.y.coerceIn(0f, size.height.toFloat())
 
     return Color.hsv(
         hue = hue,
-        saturation = position.x / size.width,
-        value = 1f - (position.y / size.height)
+        saturation = clampedX / size.width,
+        value = 1f - (clampedY / size.height)
     )
 }
