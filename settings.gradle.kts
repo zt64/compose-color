@@ -19,4 +19,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "compose-color"
-include("core", "color-circle", "color-ring", "color-square", "color-well", "util", "sample")
+include("core", "util", "sample")

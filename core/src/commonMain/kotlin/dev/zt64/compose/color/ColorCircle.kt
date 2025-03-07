@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.*
 
 /**
- * Color circle that allows the user to select a hue by dragging a magnifier around the circle.
+ * Color circle that allows the user to select a hue by dragging a thumb around the circle.
  * The color is represented in HSV color space with a fixed saturation and value.
  *
  * @param color The current color
@@ -33,7 +33,7 @@ import kotlin.math.*
  * @param modifier
  * @param interactionSource
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
- * @param magnifier Composable that is used to draw the magnifier
+ * @param thumb Composable that is used to draw the thumb
  */
 @Composable
 public fun ColorCircle(
@@ -42,8 +42,8 @@ public fun ColorCircle(
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onColorChangeFinished: () -> Unit = {},
-    magnifier: @Composable (Color) -> Unit = {
-        ColorPickerDefaults.Magnifier(color, interactionSource)
+    thumb: @Composable (Color) -> Unit = {
+        ColorPickerDefaults.Thumb(color, interactionSource)
     }
 ) {
     val scope = rememberCoroutineScope()
@@ -62,10 +62,7 @@ public fun ColorCircle(
             .pointerInput(Unit) {
                 detectTapGestures { tapPosition ->
                     val newColor = colorForPosition(tapPosition, radius, color.hsvValue)
-                    if (newColor.isSpecified) {
-                        // offset = tapPosition
-                        onColorChange(newColor)
-                    }
+                    if (newColor.isSpecified) onColorChange(newColor)
                 }
             }
             .pointerInput(Unit) {
@@ -82,10 +79,7 @@ public fun ColorCircle(
                         change.consume()
                         val newPosition = clampPositionToRadius(change.position, radius)
                         val newColor = colorForPosition(newPosition, radius, color.hsvValue)
-                        if (newColor.isSpecified) {
-                            // offset = newPosition
-                            onColorChange(newColor)
-                        }
+                        if (newColor.isSpecified) onColorChange(newColor)
                     }
 
                     scope.launch {
@@ -106,7 +100,7 @@ public fun ColorCircle(
                 IntOffset(position.x.roundToInt(), position.y.roundToInt())
             }
         ) {
-            magnifier(color)
+            thumb(color)
         }
     }
 }

@@ -47,10 +47,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core)
-                implementation(projects.colorCircle)
-                implementation(projects.colorRing)
-                implementation(projects.colorSquare)
-                implementation(projects.colorWell)
 
                 implementation(projects.util)
 
