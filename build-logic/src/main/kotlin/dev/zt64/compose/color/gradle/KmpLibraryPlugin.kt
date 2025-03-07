@@ -29,6 +29,10 @@ class KmpLibraryPlugin : Plugin<Project> {
         target.configure<KotlinMultiplatformExtension> {
             explicitApi()
 
+            wasmJs {
+                browser()
+            }
+
             sourceSets {
                 commonMain {
                     dependencies {

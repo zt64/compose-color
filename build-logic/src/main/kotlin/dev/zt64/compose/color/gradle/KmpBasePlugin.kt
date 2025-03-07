@@ -28,10 +28,6 @@ class KmpBasePlugin : Plugin<Project> {
                     }
                 }
             }
-
-            wasmJs {
-                browser()
-            }
         }
     }
 }

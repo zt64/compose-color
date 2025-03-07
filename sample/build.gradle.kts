@@ -12,6 +12,16 @@ plugins {
 kotlin {
     androidTarget()
 
+    wasmJs {
+        moduleName = "sample"
+        browser {
+            commonWebpackConfig {
+                outputFileName = "sample.js"
+            }
+        }
+        binaries.executable()
+    }
+
     sourceSets {
         commonMain {
             dependencies {
