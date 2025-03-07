@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     id("kmp-base")
-    // alias(libs.plugins.cocoapods)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose.jb)
     alias(libs.plugins.android.application)
