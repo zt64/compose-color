@@ -12,12 +12,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 
-internal val ThumbRadiusPressed = 20.dp
+internal val ThumbRadiusPressed = 14.dp
 internal val ThumbRadius = 10.dp
 
 public object ColorPickerDefaults {
     /**
-     * Default implementation of the thumb used in the color picker.
+     * Default implementation of the thumb component for the color pickers.
      *
      * @param color The color of the thumb
      * @param interactionSource The interaction source for the thumb
