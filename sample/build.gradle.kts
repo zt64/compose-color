@@ -26,7 +26,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.core)
-
                 implementation(projects.util)
 
                 implementation(compose.runtime)

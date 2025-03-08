@@ -46,6 +46,12 @@ class KmpLibraryPlugin : Plugin<Project> {
                         // implementation(target.libs.findLibrary("compose.foundation").get())
                     }
                 }
+
+                commonTest {
+                    dependencies {
+                        implementation(target.libs.findLibrary("kotlin.test").get())
+                    }
+                }
             }
         }
     }
