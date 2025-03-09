@@ -1,25 +1,29 @@
 package dev.zt64.compose.color
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.center
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toOffset
 import dev.zt64.compose.color.util.hsvValue
 import dev.zt64.compose.color.util.hue
 import dev.zt64.compose.color.util.saturation
+import kotlinx.coroutines.launch
 import kotlin.math.*
 
 /**
@@ -30,11 +34,11 @@ import kotlin.math.*
  *
  * @sample dev.zt64.compose.color.samples.ColorRingSample
  *
- * @param color
- * @param onColorChange
- * @param modifier
- * @param interactionSource
- * @param onColorChangeFinished
+ * @param color The current color
+ * @param onColorChange Callback that is called when the color changes
+ * @param modifier The modifier for the color ring
+ * @param interactionSource The interaction source for the color ring
+ * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -44,22 +48,15 @@ public fun ColorRing(
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     thumb: @Composable () -> Unit = {
+        ColorPickerDefaults.Thumb(color, interactionSource)
     },
     onColorChangeFinished: () -> Unit = {}
 ) {
     val color by rememberUpdatedState(color)
-    var strokeWidth = remember { 16f }
     var radius by remember { mutableStateOf(0f) }
     var center by remember { mutableStateOf(Offset.Zero) }
-    var handleCenter by remember { mutableStateOf(Offset.Zero) }
-
-    fun updateHandlePosition(angle: Float) {
-        val rad = angle * (PI / 180).toFloat()
-        handleCenter = center + Offset(
-            x = radius * cos(rad),
-            y = radius * sin(rad)
-        )
-    }
+    val scope = rememberCoroutineScope()
+    val strokeWidth = with(LocalDensity.current) { 16.dp.toPx() }
 
     val brush = remember(color) {
         Brush.sweepGradient(
@@ -73,65 +70,84 @@ public fun ColorRing(
         )
     }
 
-    Canvas(
+    fun updateHandlePosition(position: Offset) {
+        onColorChange(
+            Color.hsv(
+                hue = getRotationAngle(position, center),
+                saturation = color.saturation,
+                value = color.hsvValue
+            )
+        )
+    }
+
+    Box(
         modifier = modifier
             .size(100.dp)
             .onSizeChanged {
                 radius = (it.width - strokeWidth) / 2f
                 center = Offset(it.width / 2f, it.height / 2f)
-                updateHandlePosition(color.hue)
             }
             .pointerInput(Unit) {
-                detectTapGestures {
-                    handleCenter = Offset.Zero + it
-                    onColorChange(
-                        Color.hsv(
-                            hue = getRotationAngle(it, size.center.toOffset()).toFloat(),
-                            saturation = color.saturation,
-                            value = color.hsvValue
-                        )
-                    )
+                detectTapGestures { offset ->
+                    updateHandlePosition(offset)
                     onColorChangeFinished()
                 }
             }
             .pointerInput(Unit) {
+                var interaction: DragInteraction.Start? = null
+
                 detectDragGestures(
-                    onDragEnd = onColorChangeFinished
+                    onDragStart = {
+                        scope.launch {
+                            interaction = DragInteraction.Start()
+                            interactionSource.emit(interaction!!)
+                        }
+                    },
+                    onDragEnd = {
+                        scope.launch {
+                            interaction?.let { interactionSource.emit(DragInteraction.Stop(it)) }
+                        }
+                        onColorChangeFinished()
+                    },
+                    onDragCancel = {
+                        scope.launch {
+                            interaction?.let { interactionSource.emit(DragInteraction.Cancel(it)) }
+                        }
+                        onColorChangeFinished()
+                    }
                 ) { change, _ ->
-                    val angle = getRotationAngle(change.position, center)
-                    updateHandlePosition(angle)
-                    onColorChange(
-                        Color.hsv(
-                            hue = angle.toFloat(),
-                            saturation = color.saturation,
-                            value = color.hsvValue
-                        )
-                    )
                     change.consume()
+                    updateHandlePosition(change.position)
+                }
+            }
+            .drawWithCache {
+                onDrawBehind {
+                    drawCircle(
+                        brush = brush,
+                        radius = size.minDimension / 2 - strokeWidth / 2f,
+                        style = Stroke(strokeWidth)
+                    )
                 }
             }
     ) {
-        val adjustedRadius = (size.minDimension / 2) - (strokeWidth / 2f)
-        drawCircle(
-            brush = brush,
-            radius = adjustedRadius,
-            style = Stroke(strokeWidth)
-        )
-
-        drawCircle(
-            color = Color.White,
-            radius = strokeWidth / 2f,
-            center = handleCenter
-        )
+        Box(
+            modifier = Modifier.offset {
+                val rad = color.hue * (PI / 180f).toFloat()
+                val handleOffset = center + Offset(radius * cos(rad), radius * sin(rad))
+                IntOffset(handleOffset.x.roundToInt(), handleOffset.y.roundToInt())
+            }
+        ) {
+            thumb()
+        }
     }
 }
 
 private fun getRotationAngle(currentPosition: Offset, center: Offset): Float {
     val (dx, dy) = currentPosition - center
     val theta = atan2(dy, dx)
-
     var angle = theta * (180.0 / PI).toFloat()
 
     if (angle < 0) angle += 360f
+
     return angle
 }
