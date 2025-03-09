@@ -1,15 +1,16 @@
 package dev.zt64.compose.color
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -30,8 +31,8 @@ import kotlin.math.*
  *
  * @param color The current color
  * @param onColorChange Callback that is called when the color changes
- * @param modifier
- * @param interactionSource
+ * @param modifier The modifier for the color circle
+ * @param interactionSource The interaction source for the color circle
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  * @param thumb Composable that is used to draw the thumb
  */
@@ -53,6 +54,18 @@ public fun ColorCircle(
         positionForColor(color, radius)
     }
 
+    val brush = remember(color) {
+        Brush.sweepGradient(
+            colors = List(7) { i ->
+                Color.hsv(
+                    hue = i * 60f,
+                    saturation = 1f,
+                    value = color.hsvValue
+                )
+            }
+        )
+    }
+
     Box(
         modifier = modifier
             .size(100.dp)
@@ -66,35 +79,42 @@ public fun ColorCircle(
                 }
             }
             .pointerInput(Unit) {
-                awaitEachGesture {
-                    val down = awaitFirstDown(requireUnconsumed = false)
+                var interaction: DragInteraction.Start? = null
 
-                    val press = PressInteraction.Press(down.position)
-
-                    scope.launch {
-                        interactionSource.emit(press)
+                detectDragGestures(
+                    onDragStart = {
+                        scope.launch {
+                            interaction = DragInteraction.Start()
+                            interactionSource.emit(interaction!!)
+                        }
+                    },
+                    onDragEnd = {
+                        scope.launch {
+                            interaction?.let { interactionSource.emit(DragInteraction.Stop(it)) }
+                        }
+                        onColorChangeFinished()
+                    },
+                    onDragCancel = {
+                        scope.launch {
+                            interaction?.let { interactionSource.emit(DragInteraction.Cancel(it)) }
+                        }
+                        onColorChangeFinished()
                     }
-
-                    drag(down.id) { change ->
-                        change.consume()
-                        val newPosition = clampPositionToRadius(change.position, radius)
-                        val newColor = colorForPosition(newPosition, radius, color.hsvValue)
-                        if (newColor.isSpecified) onColorChange(newColor)
-                    }
-
-                    scope.launch {
-                        interactionSource.emit(PressInteraction.Release(press))
-                    }
-
-                    onColorChangeFinished()
+                ) { change, _ ->
+                    change.consume()
+                    val newPosition = clampPositionToRadius(change.position, radius)
+                    val newColor = colorForPosition(newPosition, radius, color.hsvValue)
+                    if (newColor.isSpecified) onColorChange(newColor)
+                }
+            }
+            .drawWithCache {
+                onDrawBehind {
+                    println("drawWithCache")
+                    drawCircle(brush)
+                    drawCircle(Brush.radialGradient(listOf(Color.hsv(0f, 0f, color.hsvValue), Color.Transparent)))
                 }
             }
     ) {
-        ColorCircle(
-            modifier = Modifier.matchParentSize(),
-            value = color.hsvValue
-        )
-
         Box(
             modifier = Modifier.offset {
                 IntOffset(position.x.roundToInt(), position.y.roundToInt())
@@ -102,26 +122,6 @@ public fun ColorCircle(
         ) {
             thumb(color)
         }
-    }
-}
-
-@Composable
-internal fun ColorCircle(value: Float, modifier: Modifier = Modifier) {
-    val brush = remember(value) {
-        Brush.sweepGradient(
-            colors = List(7) { i ->
-                Color.hsv(
-                    hue = i * 60f,
-                    saturation = 1f,
-                    value = value
-                )
-            }
-        )
-    }
-
-    Canvas(modifier) {
-        drawCircle(brush)
-        drawCircle(Brush.radialGradient(listOf(Color.hsv(0f, 0f, value), Color.Transparent)))
     }
 }
 
@@ -133,7 +133,7 @@ private fun colorForPosition(position: Offset, radius: Float, value: Float): Col
 
     if (centerOffset > radius) return Color.Unspecified
 
-    val degrees = atan2(yOffset, xOffset).toDegrees()
+    val degrees = atan2(yOffset, xOffset) * 180 / PI
     val centerAngle = (degrees + 360.0) % 360.0
 
     return Color.hsv(
@@ -146,16 +146,12 @@ private fun colorForPosition(position: Offset, radius: Float, value: Float): Col
 private fun positionForColor(color: Color, radius: Float): Offset {
     val saturation = color.saturation
 
-    val angle = color.hue.toRadians()
+    val angle = color.hue * (PI / 180).toFloat()
     val x = radius + saturation * radius * cos(angle)
     val y = radius + saturation * radius * sin(angle)
 
-    return Offset(x.toFloat(), y.toFloat())
+    return Offset(x, y)
 }
-
-private fun Float.toRadians(): Double = this * PI / 180
-
-private fun Float.toDegrees(): Double = this * 180 / PI
 
 private fun clampPositionToRadius(position: Offset, radius: Float): Offset {
     val xOffset = position.x - radius
