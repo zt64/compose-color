@@ -49,6 +49,7 @@ public fun ColorSquare(
     },
     onColorChangeFinished: () -> Unit = {}
 ) {
+    val color by rememberUpdatedState(color)
     var size by remember { mutableStateOf(IntSize.Zero) }
     val offset by rememberSaveable(
         color,
@@ -68,6 +69,14 @@ public fun ColorSquare(
             modifier = modifier
                 .size(100.dp)
                 .onSizeChanged { size = it }
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = {
+                            onColorChange(colorForPosition(it, size, color.hue))
+                            onColorChangeFinished()
+                        }
+                    )
+                }
                 .pointerInput(Unit) {
                     var interaction: DragInteraction.Start? = null
 
@@ -95,14 +104,6 @@ public fun ColorSquare(
                                     interactionSource.emit(DragInteraction.Cancel(it))
                                 }
                             }
-                        }
-                    )
-                }
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onTap = {
-                            onColorChange(colorForPosition(it, size, color.hue))
-                            onColorChangeFinished()
                         }
                     )
                 }
