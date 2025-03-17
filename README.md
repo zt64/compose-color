@@ -61,4 +61,4 @@ composeColor = { module = "dev.zt64.compose-pipette:compose-pip", version.ref = 
 
 ## License
 
-[GPL v3.0](LICENSE)
+Compose-pipette is an open source project licensed under the [MIT license](LICENSE).

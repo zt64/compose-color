@@ -12,7 +12,7 @@ fun Project.publishing(libName: String) {
 
     configure<MavenPublishBaseExtension> {
         publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease = true)
-        coordinates("dev.zt64", libName, project.version.toString())
+        coordinates("dev.zt64.compose.pipette", libName, project.version.toString())
         signAllPublications()
 
         pom {
@@ -31,8 +31,8 @@ fun Project.publishing(libName: String) {
 
             licenses {
                 license {
-                    name = "GNU v3.0"
-                    url = "https://www.gnu.org/licenses/gpl-3.0.html"
+                    name = "MIT License"
+                    url = "https://opensource.org/licenses/MIT"
                 }
             }
 
