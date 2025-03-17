@@ -1,6 +1,5 @@
 package dev.zt64.compose.pipette
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.DragInteraction
@@ -12,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -50,6 +50,7 @@ public fun ColorSquare(
     onColorChangeFinished: () -> Unit = {}
 ) {
     val color by rememberUpdatedState(color)
+    val scope = rememberCoroutineScope()
     var size by remember { mutableStateOf(IntSize.Zero) }
     val offset by rememberSaveable(
         color,
@@ -62,64 +63,63 @@ public fun ColorSquare(
         mutableStateOf(positionForColor(color, size))
     }
 
-    Box {
-        val scope = rememberCoroutineScope()
-
-        Canvas(
-            modifier = modifier
-                .size(100.dp)
-                .onSizeChanged { size = it }
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onTap = {
-                            onColorChange(colorForPosition(it, size, color.hue))
-                            onColorChangeFinished()
-                        }
-                    )
-                }
-                .pointerInput(Unit) {
-                    var interaction: DragInteraction.Start? = null
-
-                    detectDragGestures(
-                        onDragStart = {
-                            scope.launch {
-                                interaction = DragInteraction.Start()
-                                interactionSource.emit(interaction)
-                            }
-                        },
-                        onDrag = { change, _ ->
-                            onColorChange(colorForPosition(change.position, size, color.hue))
-                        },
-                        onDragEnd = {
-                            scope.launch {
-                                interaction?.let {
-                                    interactionSource.emit(DragInteraction.Stop(it))
-                                }
-                            }
-                            onColorChangeFinished()
-                        },
-                        onDragCancel = {
-                            scope.launch {
-                                interaction?.let {
-                                    interactionSource.emit(DragInteraction.Cancel(it))
-                                }
-                            }
-                        }
-                    )
-                }
-        ) {
-            drawRect(Color.White)
-            drawRect(
-                Brush.horizontalGradient(
-                    listOf(
-                        Color.Transparent,
-                        Color.hsv(color.hue, 1f, 1f)
-                    )
+    Box(
+        modifier = modifier
+            .size(100.dp)
+            .onSizeChanged { size = it }
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        onColorChange(colorForPosition(it, size, color.hue))
+                        onColorChangeFinished()
+                    }
                 )
-            )
-            drawRect(Brush.verticalGradient(listOf(Color.Transparent, Color.Black)))
-        }
+            }
+            .pointerInput(Unit) {
+                var interaction: DragInteraction.Start? = null
 
+                detectDragGestures(
+                    onDragStart = {
+                        scope.launch {
+                            interaction = DragInteraction.Start()
+                            interactionSource.emit(interaction)
+                        }
+                    },
+                    onDrag = { change, _ ->
+                        onColorChange(colorForPosition(change.position, size, color.hue))
+                    },
+                    onDragEnd = {
+                        scope.launch {
+                            interaction?.let {
+                                interactionSource.emit(DragInteraction.Stop(it))
+                            }
+                        }
+                        onColorChangeFinished()
+                    },
+                    onDragCancel = {
+                        scope.launch {
+                            interaction?.let {
+                                interactionSource.emit(DragInteraction.Cancel(it))
+                            }
+                        }
+                    }
+                )
+            }
+            .drawWithCache {
+                onDrawBehind {
+                    drawRect(Color.White)
+                    drawRect(
+                        Brush.horizontalGradient(
+                            listOf(
+                                Color.Transparent,
+                                Color.hsv(color.hue, 1f, 1f)
+                            )
+                        )
+                    )
+                    drawRect(Brush.verticalGradient(listOf(Color.Transparent, Color.Black)))
+                }
+            }
+    ) {
         Box(
             modifier = Modifier.offset {
                 IntOffset(offset.x.toInt(), offset.y.toInt())
