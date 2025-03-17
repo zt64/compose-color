@@ -20,8 +20,6 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.util)
-
                 implementation(compose.runtime)
                 implementation(compose.ui)
                 implementation(compose.foundation)

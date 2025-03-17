@@ -1,11 +1,12 @@
-package dev.zt64.compose.pipette.util
+package dev.zt64.compose.pipette
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import dev.zt64.compose.pipette.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ColorTest {
+class ColorUtilTest {
     @Test
     fun testHsl() {
         testHsl(0f, 0f, 0f)

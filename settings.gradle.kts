@@ -19,4 +19,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "compose-pipette"
-include("core", "util", "sample")
+include("core", "sample")
