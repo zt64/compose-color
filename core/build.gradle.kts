@@ -1,5 +1,5 @@
-import dev.zt64.compose.color.gradle.apple
-import dev.zt64.compose.color.gradle.publishing
+import dev.zt64.compose.pipette.gradle.apple
+import dev.zt64.compose.pipette.gradle.publishing
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
@@ -44,4 +44,4 @@ kotlin {
     }
 }
 
-publishing("compose-color")
+publishing("compose-pipette")

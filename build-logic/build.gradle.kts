@@ -20,11 +20,11 @@ dependencies {
 gradlePlugin {
     plugins.register("kmp-base") {
         id = "kmp-base"
-        implementationClass = "dev.zt64.compose.color.gradle.KmpBasePlugin"
+        implementationClass = "dev.zt64.compose.pipette.gradle.KmpBasePlugin"
     }
 
     plugins.register("kmp-library") {
         id = "kmp-library"
-        implementationClass = "dev.zt64.compose.color.gradle.KmpLibraryPlugin"
+        implementationClass = "dev.zt64.compose.pipette.gradle.KmpLibraryPlugin"
     }
 }

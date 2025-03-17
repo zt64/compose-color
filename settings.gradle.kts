@@ -18,5 +18,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "compose-color"
+rootProject.name = "compose-pipette"
 include("core", "util", "sample")

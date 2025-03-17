@@ -53,7 +53,7 @@ kotlin {
 }
 
 android {
-    namespace = "dev.zt64.compose.color.sample"
+    namespace = "dev.zt64.compose.pipette.sample"
     compileSdk = 35
 
     defaultConfig {
@@ -69,7 +69,7 @@ compose {
 
     desktop {
         application {
-            mainClass = "dev.zt64.compose.color.sample.MainKt"
+            mainClass = "dev.zt64.compose.pipette.sample.MainKt"
         }
     }
 }

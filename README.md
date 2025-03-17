@@ -1,6 +1,6 @@
-# 🎨 compose-color
+# 🎨 compose-pipette
 
-A multiplatform color picker for Jetpack Compose, featuring components for selecting colors. Designed to be minimal and
+A multiplatform color picker for Kotlin Compose, featuring components for selecting colors. Designed to be minimal and
 dependency-free.
 
 ## Styles
@@ -56,7 +56,7 @@ To use the library, add the following to your `build.gradle.kts`:
 composeColor = "x.y.z"
 
 [libraries]
-composeColor = { module = "dev.zt64.compose-color:compose-color", version.ref = "composeColor" }
+composeColor = { module = "dev.zt64.compose-pipette:compose-pip", version.ref = "composeColor" }
 ```
 
 ## License
