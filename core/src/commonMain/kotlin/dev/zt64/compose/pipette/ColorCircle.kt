@@ -31,7 +31,7 @@ import kotlin.math.*
  *
  * @param color The current color
  * @param onColorChange Callback that is called when the color changes
- * @param modifier The modifier for the color circle
+ * @param modifier The modifier to be applied to the color circle
  * @param interactionSource The interaction source for the color circle
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  * @param thumb Composable that is used to draw the thumb

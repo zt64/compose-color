@@ -33,8 +33,8 @@ import kotlinx.coroutines.launch
  *
  * @param color The current color
  * @param onColorChange Callback that is called when the color changes
- * @param modifier
- * @param interactionSource
+ * @param modifier The modifier to be applied to the color square
+ * @param interactionSource The interaction source for the color square
  * @param thumb Composable that is used to draw the thumb
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  */

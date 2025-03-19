@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.zt64.compose.pipette.util.hsvValue
@@ -32,13 +33,12 @@ import kotlin.math.*
  *
  * To be able to also control the saturation, use the [ColorCircle] composable.
  *
- * @sample dev.zt64.compose.pipette.samples.ColorRingSample
- *
  * @param color The current color
  * @param onColorChange Callback that is called when the color changes
- * @param modifier The modifier for the color ring
+ * @param modifier The modifier to be applied to the color ring
  * @param interactionSource The interaction source for the color ring
  * @param ringStrokeWidth The width of the ring
+ * @param thumb The composable that is used to draw the thumb
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  */
 @OptIn(ExperimentalFoundationApi::class)
