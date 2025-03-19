@@ -109,7 +109,6 @@ public fun ColorCircle(
             }
             .drawWithCache {
                 onDrawBehind {
-                    println("drawWithCache")
                     drawCircle(brush)
                     drawCircle(Brush.radialGradient(listOf(Color.hsv(0f, 0f, color.hsvValue), Color.Transparent)))
                 }
