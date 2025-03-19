@@ -38,6 +38,7 @@ import kotlin.math.*
  * @param onColorChange Callback that is called when the color changes
  * @param modifier The modifier for the color ring
  * @param interactionSource The interaction source for the color ring
+ * @param ringStrokeWidth The width of the ring
  * @param onColorChangeFinished Callback that is called when the user finishes changing the color
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -47,6 +48,7 @@ public fun ColorRing(
     onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    ringStrokeWidth: Dp = 16.dp,
     thumb: @Composable () -> Unit = {
         ColorPickerDefaults.Thumb(color, interactionSource)
     },
@@ -56,7 +58,7 @@ public fun ColorRing(
     var radius by remember { mutableStateOf(0f) }
     var center by remember { mutableStateOf(Offset.Zero) }
     val scope = rememberCoroutineScope()
-    val strokeWidth = with(LocalDensity.current) { 16.dp.toPx() }
+    val strokeWidth = with(LocalDensity.current) { ringStrokeWidth.toPx() }
 
     val brush = remember(color) {
         Brush.sweepGradient(
