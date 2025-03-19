@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
@@ -52,14 +50,7 @@ public fun ColorSquare(
     val color by rememberUpdatedState(color)
     val scope = rememberCoroutineScope()
     var size by remember { mutableStateOf(IntSize.Zero) }
-    val offset by rememberSaveable(
-        color,
-        size,
-        stateSaver = listSaver(
-            save = { listOf(it.x, it.y) },
-            restore = { (x, y) -> Offset(x, y) }
-        )
-    ) {
+    val offset by remember(color, size) {
         mutableStateOf(positionForColor(color, size))
     }
 
