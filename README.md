@@ -1,7 +1,18 @@
 # 🎨 compose-pipette
 
+[![Maven Central Version](https://img.shields.io/maven-central/v/dev.zt64.compose.pipette/compose-pipette)](https://central.sonatype.com/artifact/dev.zt64.compose.pipette/compose-pipette)
+
 A multiplatform color picker for Kotlin Compose, featuring components for selecting colors. Designed to be minimal and
-dependency-free.
+dependency-free for easy integration into your project.
+
+Supported platforms:
+
+- JVM
+- Android
+- Kotlin/JS
+- Kotlin/WASM
+- macOS
+- iOS
 
 ## Styles
 
@@ -56,7 +67,7 @@ To use the library, add the following to your `build.gradle.kts`:
 composePipette = "x.y.z"
 
 [libraries]
-composePipette = { module = "dev.zt64.compose-pipette:compose-pipette", version.ref = "composePipette" }
+composePipette = { module = "dev.zt64.compose.pipette:compose-pipette", version.ref = "composePipette" }
 ```
 
 ## License
