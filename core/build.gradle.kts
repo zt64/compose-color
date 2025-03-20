@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.compatibility)
 }
 
+description = "Color pickers for Kotlin Compose multiplatform"
+
 @OptIn(ExperimentalWasmDsl::class)
 kotlin {
     jvm()
