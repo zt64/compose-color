@@ -42,7 +42,7 @@ fun Sample() {
     var useDynamicTheme by rememberSaveable { mutableStateOf(false) }
 
     Theme(
-        color = color,
+        color = { color },
         theme = theme,
         useDynamicTheme = useDynamicTheme
     ) {

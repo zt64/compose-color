@@ -9,11 +9,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.Stable
+import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.materialkolor.DynamicMaterialTheme
 import com.materialkolor.PaletteStyle
 
+@Stable
 enum class Theme(val icon: ImageVector, val label: String) {
     LIGHT(Icons.Default.LightMode, "Light"),
     DARK(Icons.Default.DarkMode, "Dark"),
@@ -21,10 +23,10 @@ enum class Theme(val icon: ImageVector, val label: String) {
 }
 
 @Composable
-fun Theme(color: Color, theme: Theme, useDynamicTheme: Boolean, content: @Composable () -> Unit) {
+fun Theme(color: ColorProducer, theme: Theme, useDynamicTheme: Boolean, content: @Composable () -> Unit) {
     if (useDynamicTheme) {
         DynamicMaterialTheme(
-            seedColor = color,
+            seedColor = color(),
             useDarkTheme = theme == Theme.DARK || theme == Theme.SYSTEM && isSystemInDarkTheme(),
             style = PaletteStyle.Fidelity,
             content = content
