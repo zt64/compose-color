@@ -53,10 +53,10 @@ To use the library, add the following to your `build.gradle.kts`:
 
 ```toml
 [versions]
-composeColor = "x.y.z"
+composePipette = "x.y.z"
 
 [libraries]
-composeColor = { module = "dev.zt64.compose-pipette:compose-pip", version.ref = "composeColor" }
+composePipette = { module = "dev.zt64.compose-pipette:compose-pipette", version.ref = "composePipette" }
 ```
 
 ## License
