@@ -2,18 +2,13 @@ package dev.zt64.compose.pipette
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import dev.zt64.compose.pipette.util.*
+import dev.zt64.compose.pipette.util.hsvValue
+import dev.zt64.compose.pipette.util.hue
+import dev.zt64.compose.pipette.util.saturation
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ColorUtilTest {
-    @Test
-    fun testHsl() {
-        testHsl(0f, 0f, 0f)
-        testHsl(0f, 1f, 0.5f)
-        testHsl(120f, 1f, 0.5f)
-    }
-
     @Test
     fun testHsv() {
         testHsv(0f, 0f, 0f)
@@ -35,13 +30,6 @@ class ColorUtilTest {
         val color = Color.hsv(h, 0.5f, 0.5f)
 
         assertEquals(h, color.hue)
-    }
-
-    private fun testHsl(h: Float, s: Float, l: Float) {
-        val color = Color.hsl(h, s, l)
-        assertEquals(h, color.hue)
-        assertEquals(s, color.hslSaturation)
-        assertEquals(l, color.lightness)
     }
 
     private fun testHsv(h: Float, s: Float, v: Float) {

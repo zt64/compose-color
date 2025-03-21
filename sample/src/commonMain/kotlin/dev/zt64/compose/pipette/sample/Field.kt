@@ -89,32 +89,6 @@ fun HsvField(hsvColor: HsvColor, onColorChange: (Color) -> Unit) {
 }
 
 @Composable
-fun HslField(hue: Float, saturation: Float, lightness: Float, onColorChange: (Color) -> Unit) {
-    val hslString = remember(hue, saturation, lightness) {
-        "${hue.roundToInt()}°, ${(saturation * 100).roundToInt()}%, ${(lightness * 100).roundToInt()}%"
-    }
-
-    FormatField(
-        label = "HSL",
-        value = hslString,
-        onValueChange = {
-            try {
-                val (hue, saturation, lightness) = it
-                    .split(",")
-                    .map { it.dropLast(1).trim().toFloatOrNull() }
-
-                if (hue != null && saturation != null && lightness != null) {
-                    onColorChange(Color.hsl(hue, saturation, lightness))
-                }
-            } catch (_: Exception) {
-                return@FormatField false
-            }
-            true
-        }
-    )
-}
-
-@Composable
 private fun FormatField(
     label: String,
     value: String,

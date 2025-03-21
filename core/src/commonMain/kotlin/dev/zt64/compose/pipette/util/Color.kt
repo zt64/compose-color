@@ -37,27 +37,6 @@ public val Color.saturation: Float
     }
 
 /**
- * The saturation of the color in the HSL color space.
- */
-public val Color.hslSaturation: Float
-    get() {
-        val max = maxComponent()
-        val min = minComponent()
-        val l = (max + min) / 2
-        return when {
-            max == min -> 0f
-            l <= 0.5f -> (max - min) / (max + min)
-            else -> (max - min) / (2 - max - min)
-        }
-    }
-
-/**
- * The lightness of the color in the HSL color space.
- */
-public val Color.lightness: Float
-    get() = (maxComponent() + minComponent()) / 2
-
-/**
  * The value of the color in the HSV color space.
  */
 public val Color.hsvValue: Float

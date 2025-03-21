@@ -17,10 +17,8 @@ public final class dev/zt64/compose/pipette/ColorSquareKt {
 }
 
 public final class dev/zt64/compose/pipette/util/ColorKt {
-	public static final fun getHslSaturation-8_81llA (J)F
 	public static final fun getHsvValue-8_81llA (J)F
 	public static final fun getHue-8_81llA (J)F
-	public static final fun getLightness-8_81llA (J)F
 	public static final fun getSaturation-8_81llA (J)F
 }
 
