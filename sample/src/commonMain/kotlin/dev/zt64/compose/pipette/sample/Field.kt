@@ -9,24 +9,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import dev.zt64.compose.pipette.util.*
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalStdlibApi::class)
 @Composable
 fun HexField(color: Color, onColorChange: (Color) -> Unit) {
-    val r by remember(color) { derivedStateOf { (color.red * 255).toInt() } }
-    val g by remember(color) { derivedStateOf { (color.green * 255).toInt() } }
-    val b by remember(color) { derivedStateOf { (color.blue * 255).toInt() } }
-    val hex by remember(color) {
-        derivedStateOf {
-            buildString {
-                append("#")
-                append(r.toString(16).padStart(2, '0'))
-                append(g.toString(16).padStart(2, '0'))
-                append(b.toString(16).padStart(2, '0'))
-            }.uppercase()
-        }
+    val hex = remember(color) {
+        "#" + listOf(color.red, color.green, color.blue).joinToString("") {
+            (it * 255).roundToInt().toString(16).padStart(2, '0')
+        }.uppercase()
     }
 
     FormatField(
@@ -49,17 +40,11 @@ fun HexField(color: Color, onColorChange: (Color) -> Unit) {
 
 @Composable
 fun RgbField(color: Color, onColorChange: (Color) -> Unit) {
-    val r by remember(color) {
-        derivedStateOf { (color.red * 255).toInt() }
+    val rgbString = remember(color) {
+        listOf(color.red, color.green, color.blue).joinToString(", ") {
+            (it * 255).roundToInt().toString()
+        }
     }
-    val g by remember(color) {
-        derivedStateOf { (color.green * 255).toInt() }
-    }
-    val b by remember(color) {
-        derivedStateOf { (color.blue * 255).toInt() }
-    }
-
-    val rgbString = remember(r, g, b) { "$r, $g, $b" }
 
     FormatField(
         label = "RGB",
@@ -80,11 +65,10 @@ fun RgbField(color: Color, onColorChange: (Color) -> Unit) {
 }
 
 @Composable
-fun HsvField(color: Color, onColorChange: (Color) -> Unit) {
-    val h by remember(color) { derivedStateOf { color.hue.roundToInt() } }
-    val s by remember(color) { derivedStateOf { (color.saturation * 100).roundToInt() } }
-    val v by remember(color) { derivedStateOf { (color.hsvValue * 100).roundToInt() } }
-    val hsvString = remember(h, s, v) { "$h°, $s%, $v%" }
+fun HsvField(hsvColor: HsvColor, onColorChange: (Color) -> Unit) {
+    val hsvString = remember(hsvColor) {
+        "${hsvColor.hue.roundToInt()}°, ${(hsvColor.saturation * 100).roundToInt()}%, ${(hsvColor.value * 100).roundToInt()}%"
+    }
 
     FormatField(
         label = "HSV",
@@ -105,11 +89,10 @@ fun HsvField(color: Color, onColorChange: (Color) -> Unit) {
 }
 
 @Composable
-fun HslField(color: Color, onColorChange: (Color) -> Unit) {
-    val h by remember(color) { derivedStateOf { color.hue.roundToInt() } }
-    val s by remember(color) { derivedStateOf { (color.hslSaturation * 100).roundToInt() } }
-    val l by remember(color) { derivedStateOf { (color.lightness * 100).roundToInt() } }
-    val hslString = remember(h, s, l) { "$h°, $s%, $l%" }
+fun HslField(hue: Float, saturation: Float, lightness: Float, onColorChange: (Color) -> Unit) {
+    val hslString = remember(hue, saturation, lightness) {
+        "${hue.roundToInt()}°, ${(saturation * 100).roundToInt()}%, ${(lightness * 100).roundToInt()}%"
+    }
 
     FormatField(
         label = "HSL",
@@ -132,7 +115,12 @@ fun HslField(color: Color, onColorChange: (Color) -> Unit) {
 }
 
 @Composable
-fun FormatField(label: String, value: String, onValueChange: (String) -> Boolean, modifier: Modifier = Modifier) {
+private fun FormatField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Boolean,
+    modifier: Modifier = Modifier
+) {
     var isError by rememberSaveable { mutableStateOf(false) }
 
     TextField(
@@ -145,9 +133,7 @@ fun FormatField(label: String, value: String, onValueChange: (String) -> Boolean
         onValueChange = {
             isError = !onValueChange(it)
         },
-        label = {
-            Text(label)
-        },
+        label = { Text(label) },
         supportingText = if (isError) {
             { Text("Invalid $label") }
         } else {

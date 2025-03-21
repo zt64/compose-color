@@ -1,22 +1,20 @@
 package dev.zt64.compose.pipette.sample
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SwitchLeft
 import androidx.compose.material.icons.filled.SwitchRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.center
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
@@ -30,14 +28,11 @@ import dev.zt64.compose.pipette.util.saturation
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun Sample() {
-    var color by rememberSaveable(
-        stateSaver = listSaver(
-            save = { listOf(it.toArgb()) },
-            restore = { Color(it[0]) }
-        )
-    ) {
-        mutableStateOf(Color.Red)
+    var hsvColor by rememberSaveable { mutableStateOf(HsvColor(180f, 1f, 1f)) }
+    val color by remember {
+        derivedStateOf { Color.hsv(hsvColor.hue, hsvColor.saturation, hsvColor.value) }
     }
+
     var theme by rememberSaveable { mutableStateOf(Theme.SYSTEM) }
     var useDynamicTheme by rememberSaveable { mutableStateOf(false) }
 
@@ -115,11 +110,10 @@ fun Sample() {
             floatingActionButton = {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        val r = (0..255).random()
-                        val g = (0..255).random()
-                        val b = (0..255).random()
+                        val h = (0..359).random().toFloat()
+                        val s = (20..100).random().toFloat() / 100f
 
-                        color = Color(r, g, b)
+                        hsvColor = HsvColor(h, s, 1f)
                     },
                     icon = {
                         Icon(
@@ -127,179 +121,185 @@ fun Sample() {
                             contentDescription = null
                         )
                     },
-                    text = {
-                        Text("Randomize")
-                    }
+                    text = { Text("Randomize") }
                 )
             }
         ) { paddingValues ->
-            val first = remember {
-                movableContentOf {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(18.dp)
+            @Composable
+            fun Sliders() {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(18.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.height(IntrinsicSize.Min)
                     ) {
-                        Row(
-                            modifier = Modifier.height(IntrinsicSize.Min)
+                        Column(
+                            modifier = Modifier.fillMaxHeight()
                         ) {
-                            Column(
-                                modifier = Modifier.fillMaxHeight()
-                            ) {
-                                HexField(
-                                    color = color,
-                                    onColorChange = { color = it }
-                                )
+                            HexField(
+                                color = color,
+                                onColorChange = { newColor ->
+                                    hsvColor = HsvColor(newColor.hue, newColor.saturation, newColor.hsvValue)
+                                }
+                            )
 
-                                RgbField(
-                                    color = color,
-                                    onColorChange = { color = it }
-                                )
+                            RgbField(
+                                color = color,
+                                onColorChange = { newColor ->
+                                    hsvColor = HsvColor(newColor.hue, newColor.saturation, newColor.hsvValue)
+                                }
+                            )
 
-                                HsvField(
-                                    color = color,
-                                    onColorChange = { color = it }
-                                )
-
-                                HslField(
-                                    color = color,
-                                    onColorChange = { color = it }
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Box(
-                                modifier = Modifier
-                                    .width(100.dp)
-                                    .fillMaxHeight()
-                                    .background(color, MaterialTheme.shapes.medium)
+                            HsvField(
+                                hsvColor = hsvColor,
+                                onColorChange = { newColor ->
+                                    hsvColor = HsvColor(newColor.hue, newColor.saturation, newColor.hsvValue)
+                                }
                             )
                         }
 
-                        Column {
-                            Text(
-                                text = "Hue",
-                                style = MaterialTheme.typography.titleMedium
-                            )
+                        Spacer(Modifier.width(12.dp))
 
-                            Spacer(Modifier.height(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .width(100.dp)
+                                .fillMaxHeight()
+                                .background(color, MaterialTheme.shapes.medium)
+                        )
+                    }
 
-                            val hue by remember(color) {
-                                derivedStateOf { color.hue }
-                            }
-                            Slider(
-                                value = hue,
-                                onValueChange = {
-                                    color = Color.hsv(it, color.saturation, color.hsvValue)
-                                },
-                                valueRange = 0f..359f,
-                                brush = Brush.horizontalGradient(
-                                    listOf(
-                                        Color.Red,
-                                        Color.Yellow,
-                                        Color.Green,
-                                        Color.Cyan,
-                                        Color.Blue,
-                                        Color.Magenta,
-                                        Color.Red
-                                    )
+                    Column {
+                        Text(
+                            text = "Hue",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+
+                        Spacer(Modifier.height(8.dp))
+
+                        SampleSlider(
+                            value = hsvColor.hue,
+                            onValueChange = {
+                                hsvColor = hsvColor.copy(first = it)
+                            },
+                            valueRange = 0f..359f,
+                            brush = Brush.horizontalGradient(
+                                listOf(
+                                    Color.Red,
+                                    Color.Yellow,
+                                    Color.Green,
+                                    Color.Cyan,
+                                    Color.Blue,
+                                    Color.Magenta,
+                                    Color.Red
                                 )
                             )
-                        }
+                        )
+                    }
 
-                        Column {
-                            Text(
-                                text = "Saturation",
-                                style = MaterialTheme.typography.titleMedium
-                            )
+                    Column {
+                        Text(
+                            text = "Saturation",
+                            style = MaterialTheme.typography.titleMedium
+                        )
 
-                            Spacer(Modifier.height(8.dp))
+                        Spacer(Modifier.height(8.dp))
 
-                            Slider(
-                                value = color.saturation,
-                                onValueChange = {
-                                    color = Color.hsv(color.hue, it, color.hsvValue)
-                                },
-                                valueRange = 0f..1f,
-                                brush = Brush.horizontalGradient(
-                                    listOf(
-                                        Color.White,
-                                        Color.hsv(color.hue, 1f, color.hsvValue)
-                                    )
+                        SampleSlider(
+                            value = hsvColor.saturation,
+                            onValueChange = {
+                                hsvColor = hsvColor.copy(second = it)
+                            },
+                            valueRange = 0f..1f,
+                            brush = Brush.horizontalGradient(
+                                listOf(
+                                    Color.White,
+                                    Color.hsv(hsvColor.hue, 1f, hsvColor.value)
                                 )
                             )
-                        }
+                        )
+                    }
 
-                        Column {
-                            Text(
-                                text = "Value",
-                                style = MaterialTheme.typography.titleMedium
-                            )
+                    Column {
+                        Text(
+                            text = "Value",
+                            style = MaterialTheme.typography.titleMedium
+                        )
 
-                            Spacer(Modifier.height(8.dp))
+                        Spacer(Modifier.height(8.dp))
 
-                            Slider(
-                                value = color.hsvValue,
-                                onValueChange = {
-                                    color = Color.hsv(color.hue, color.saturation, it)
-                                },
-                                valueRange = 0f..1f,
-                                brush = Brush.horizontalGradient(
-                                    listOf(
-                                        Color.Black,
-                                        Color.hsv(color.hue, color.saturation, 1f)
-                                    )
+                        SampleSlider(
+                            value = hsvColor.value,
+                            onValueChange = {
+                                hsvColor = hsvColor.copy(third = it)
+                            },
+                            valueRange = 0f..1f,
+                            brush = Brush.horizontalGradient(
+                                listOf(
+                                    Color.Black,
+                                    Color.hsv(hsvColor.hue, hsvColor.saturation, 1f)
                                 )
                             )
-                        }
+                        )
                     }
                 }
             }
 
-            val second = remember {
-                movableContentOf {
-                    FlowRow(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalArrangement = Arrangement.spacedBy(24.dp)
+            @Composable
+            fun Pickers() {
+                FlowRow(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text("Color Circle")
+                        Text("Color Circle")
 
-                            Spacer(Modifier.height(6.dp))
+                        Spacer(Modifier.height(6.dp))
 
-                            ColorCircle(
-                                color = color,
-                                onColorChange = { color = it }
-                            )
-                        }
+                        ColorCircle(
+                            color = color,
+                            onColorChange = { newColor ->
+                                hsvColor = hsvColor.copy(
+                                    first = newColor.hue,
+                                    second = newColor.saturation
+                                )
+                            }
+                        )
+                    }
 
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text("Standard Color Picker")
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Color Square")
 
-                            Spacer(Modifier.height(6.dp))
+                        Spacer(Modifier.height(6.dp))
 
-                            ColorSquare(
-                                color = color,
-                                onColorChange = { color = it }
-                            )
-                        }
+                        ColorSquare(
+                            color = color,
+                            onColorChange = { newColor ->
+                                hsvColor = hsvColor.copy(
+                                    second = newColor.saturation,
+                                    third = newColor.hsvValue
+                                )
+                            }
+                        )
+                    }
 
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text("Color Ring")
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Color Ring")
 
-                            Spacer(Modifier.height(6.dp))
+                        Spacer(Modifier.height(6.dp))
 
-                            ColorRing(
-                                color = color,
-                                onColorChange = { color = it }
-                            )
-                        }
+                        ColorRing(
+                            color = color,
+                            onColorChange = { newColor ->
+                                hsvColor = hsvColor.copy(first = newColor.hue)
+                            }
+                        )
                     }
                 }
             }
@@ -317,75 +317,19 @@ fun Sample() {
                                 .matchParentSize()
                                 .verticalScroll(rememberScrollState())
                         ) {
-                            first()
-                            second()
+                            Sliders()
+                            Pickers()
                         }
                     }
 
                     else -> {
                         Row {
-                            first()
-                            second()
+                            Sliders()
+                            Pickers()
                         }
                     }
                 }
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun Slider(
-    value: Float,
-    onValueChange: (Float) -> Unit,
-    valueRange: ClosedFloatingPointRange<Float>,
-    brush: Brush
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    Slider(
-        value = value,
-        onValueChange = onValueChange,
-        thumb = {
-            val interactions = remember { mutableStateListOf<Interaction>() }
-            LaunchedEffect(interactionSource) {
-                interactionSource.interactions.collect { interaction ->
-                    when (interaction) {
-                        is PressInteraction.Press -> interactions.add(interaction)
-                        is PressInteraction.Release -> interactions.remove(interaction.press)
-                        is PressInteraction.Cancel -> interactions.remove(interaction.press)
-                        is DragInteraction.Start -> interactions.add(interaction)
-                        is DragInteraction.Stop -> interactions.remove(interaction.start)
-                        is DragInteraction.Cancel -> interactions.remove(interaction.start)
-                    }
-                }
-            }
-
-            val size = if (interactions.isNotEmpty()) 28.dp else 24.dp
-            Spacer(
-                Modifier
-                    .size(size)
-                    .hoverable(interactionSource = interactionSource)
-                    .background(MaterialTheme.colorScheme.primary, CircleShape)
-            )
-        },
-        track = {
-            Canvas(
-                modifier = Modifier
-                    .widthIn(max = 700.dp)
-                    .height(12.dp)
-                    .fillMaxWidth()
-            ) {
-                drawLine(
-                    brush = brush,
-                    start = Offset(0f, size.center.y),
-                    end = Offset(size.width, size.center.y),
-                    strokeWidth = size.height,
-                    cap = StrokeCap.Round
-                )
-            }
-        },
-        valueRange = valueRange,
-        interactionSource = interactionSource
-    )
 }
