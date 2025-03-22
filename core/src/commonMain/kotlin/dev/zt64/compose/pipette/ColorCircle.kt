@@ -50,9 +50,6 @@ public fun ColorCircle(
     val scope = rememberCoroutineScope()
     val color by rememberUpdatedState(color)
     var radius by rememberSaveable { mutableStateOf(0f) }
-    val position = remember(color, radius) {
-        positionForColor(color, radius)
-    }
 
     val brush = remember(color) {
         Brush.sweepGradient(
@@ -114,6 +111,16 @@ public fun ColorCircle(
                 }
             }
     ) {
+        val position = remember(color, radius) {
+            val angle = color.hue * (PI / 180).toFloat()
+            val distance = color.saturation * radius
+
+            Offset(
+                x = radius + distance * cos(angle),
+                y = radius + distance * sin(angle)
+            )
+        }
+
         Box(
             modifier = Modifier.offset {
                 IntOffset(position.x.roundToInt(), position.y.roundToInt())
@@ -132,24 +139,14 @@ private fun colorForPosition(position: Offset, radius: Float, value: Float): Col
 
     if (centerOffset > radius) return Color.Unspecified
 
-    val degrees = atan2(yOffset, xOffset) * 180 / PI
-    val centerAngle = (degrees + 360.0) % 360.0
+    val degrees = atan2(yOffset, xOffset) * (180 / PI).toFloat()
+    val centerAngle = (degrees + 360) % 360
 
     return Color.hsv(
-        hue = centerAngle.toFloat(),
+        hue = centerAngle,
         saturation = centerOffset / radius,
         value = value
     )
-}
-
-private fun positionForColor(color: Color, radius: Float): Offset {
-    val saturation = color.saturation
-
-    val angle = color.hue * (PI / 180).toFloat()
-    val x = radius + saturation * radius * cos(angle)
-    val y = radius + saturation * radius * sin(angle)
-
-    return Offset(x, y)
 }
 
 private fun clampPositionToRadius(position: Offset, radius: Float): Offset {
@@ -159,11 +156,11 @@ private fun clampPositionToRadius(position: Offset, radius: Float): Offset {
     val centerOffset = hypot(xOffset, yOffset)
 
     // If the position is outside the circle, adjust it to be on the edge in the same direction
-    if (centerOffset > radius) {
+    return if (centerOffset > radius) {
         val scale = radius / centerOffset
-        return Offset((xOffset * scale) + radius, (yOffset * scale) + radius)
+        Offset((xOffset * scale) + radius, (yOffset * scale) + radius)
+    } else {
+        // Otherwise, the position is inside the circle so return it as is
+        position
     }
-
-    // If the position is inside the circle, return it as is
-    return position
 }

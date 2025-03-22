@@ -8,6 +8,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.*
+import dev.zt64.compose.pipette.util.hsvValue
+import dev.zt64.compose.pipette.util.hue
 import dev.zt64.compose.pipette.util.saturation
 import kotlin.math.round
 import kotlin.test.Test
@@ -24,8 +26,12 @@ class ColorPickerTest {
         setContent {
             ColorSquare(
                 modifier = Modifier.testTag(TEST_TAG),
-                color = color,
-                onColorChange = { color = it }
+                hue = color.hue,
+                saturation = color.saturation,
+                value = color.hsvValue,
+                onColorChange = { h, s, v ->
+                    color = Color.hsv(h, s, v)
+                }
             )
         }
 
