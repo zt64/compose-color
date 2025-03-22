@@ -13,7 +13,7 @@ public final class dev/zt64/compose/pipette/ColorRingKt {
 }
 
 public final class dev/zt64/compose/pipette/ColorSquareKt {
-	public static final fun ColorSquare-ZPw9REg (JLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ColorSquare (FFFLkotlin/jvm/functions/Function3;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/interaction/MutableInteractionSource;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class dev/zt64/compose/pipette/util/ColorKt {

@@ -18,10 +18,8 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import dev.zt64.compose.pipette.util.hsvValue
-import dev.zt64.compose.pipette.util.hue
-import dev.zt64.compose.pipette.util.saturation
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 /**
  * Standard color picker that allows the user to select a color by dragging a thumb around the color space.
@@ -29,7 +27,12 @@ import kotlinx.coroutines.launch
  * The color is represented in HSV color space with a fixed hue. The saturation and value can be controlled by
  * dragging the thumb.
  *
- * @param color The current color
+ * **Note** that the color is represented in HSV color space with a fixed hue. Androidx Compose Color cannot represent
+ * colors in HSV color space. Therefore, the color must be passed as separate parameters.
+ *
+ * @param hue The hue of the color
+ * @param saturation The saturation of the color
+ * @param value The value of the color
  * @param onColorChange Callback that is called when the color changes
  * @param modifier The modifier to be applied to the color square
  * @param interactionSource The interaction source for the color square
@@ -38,21 +41,19 @@ import kotlinx.coroutines.launch
  */
 @Composable
 public fun ColorSquare(
-    color: Color,
-    onColorChange: (Color) -> Unit,
+    hue: Float,
+    saturation: Float,
+    value: Float,
+    onColorChange: (hue: Float, saturation: Float, value: Float) -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     thumb: @Composable () -> Unit = {
-        ColorPickerDefaults.Thumb(color, interactionSource)
+        ColorPickerDefaults.Thumb(Color.hsv(hue, saturation, value), interactionSource)
     },
     onColorChangeFinished: () -> Unit = {}
 ) {
-    val color by rememberUpdatedState(color)
     val scope = rememberCoroutineScope()
     var size by remember { mutableStateOf(IntSize.Zero) }
-    val offset by remember(color, size) {
-        mutableStateOf(positionForColor(color, size))
-    }
 
     Box(
         modifier = modifier
@@ -61,7 +62,7 @@ public fun ColorSquare(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
-                        onColorChange(colorForPosition(it, size, color.hue))
+                        hsvColorForPosition(it, size, hue).let { (h, s, v) -> onColorChange(h, s, v) }
                         onColorChangeFinished()
                     }
                 )
@@ -77,7 +78,7 @@ public fun ColorSquare(
                         }
                     },
                     onDrag = { change, _ ->
-                        onColorChange(colorForPosition(change.position, size, color.hue))
+                        hsvColorForPosition(change.position, size, hue).let { (h, s, v) -> onColorChange(h, s, v) }
                     },
                     onDragEnd = {
                         scope.launch {
@@ -103,7 +104,7 @@ public fun ColorSquare(
                         Brush.horizontalGradient(
                             listOf(
                                 Color.Transparent,
-                                Color.hsv(color.hue, 1f, 1f)
+                                Color.hsv(hue, 1f, 1f)
                             )
                         )
                     )
@@ -111,9 +112,15 @@ public fun ColorSquare(
                 }
             }
     ) {
+        val offset = remember(saturation, value, size) {
+            val x = saturation * size.width
+            val y = size.height - value * size.height
+            Offset(x, y)
+        }
+
         Box(
             modifier = Modifier.offset {
-                IntOffset(offset.x.toInt(), offset.y.toInt())
+                IntOffset(offset.x.roundToInt(), offset.y.roundToInt())
             }
         ) {
             thumb()
@@ -121,19 +128,12 @@ public fun ColorSquare(
     }
 }
 
-private fun positionForColor(color: Color, size: IntSize): Offset {
-    val x = color.saturation * size.width
-    val y = size.height - color.hsvValue * size.height
-    return Offset(x, y)
-}
-
-private fun colorForPosition(position: Offset, size: IntSize, hue: Float): Color {
+private fun hsvColorForPosition(position: Offset, size: IntSize, hue: Float): Triple<Float, Float, Float> {
     val clampedX = position.x.coerceIn(0f, size.width.toFloat())
     val clampedY = position.y.coerceIn(0f, size.height.toFloat())
 
-    return Color.hsv(
-        hue = hue,
-        saturation = clampedX / size.width,
-        value = 1f - (clampedY / size.height)
-    )
+    val saturation = clampedX / size.width
+    val value = 1f - (clampedY / size.height)
+
+    return Triple(hue, saturation, value)
 }

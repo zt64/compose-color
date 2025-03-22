@@ -277,12 +277,11 @@ fun Sample() {
                         Spacer(Modifier.height(6.dp))
 
                         ColorSquare(
-                            color = color,
-                            onColorChange = { newColor ->
-                                hsvColor = hsvColor.copy(
-                                    second = newColor.saturation,
-                                    third = newColor.hsvValue
-                                )
+                            hue = hsvColor.hue,
+                            saturation = hsvColor.saturation,
+                            value = hsvColor.value,
+                            onColorChange = { _, s, v ->
+                                hsvColor = hsvColor.copy(second = s, third = v)
                             }
                         )
                     }
