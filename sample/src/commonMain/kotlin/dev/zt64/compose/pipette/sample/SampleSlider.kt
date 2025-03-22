@@ -10,6 +10,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.center
@@ -46,14 +47,20 @@ fun SampleSlider(
                 }
             }
 
-            val size = if (interactions.isNotEmpty()) 28.dp else 24.dp
-
-            Spacer(
-                Modifier
-                    .size(size)
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
                     .hoverable(interactionSource = interactionSource)
-                    .background(MaterialTheme.colorScheme.primary, CircleShape)
-            )
+            ) {
+                val visualSize = if (interactions.isNotEmpty()) 28.dp else 24.dp
+
+                Spacer(
+                    modifier = Modifier
+                        .size(visualSize)
+                        .align(Alignment.Center)
+                        .background(MaterialTheme.colorScheme.primary, CircleShape)
+                )
+            }
         },
         track = {
             Canvas(
